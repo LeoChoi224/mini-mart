@@ -17,23 +17,21 @@
 </div>
 
 
-<form method="post" action="/login">
+<form method="post">
     <div>
         <input type="email" name="userId" placeholder="아이디(이메일) 입력" required />
-    </div>
-    <div>
-        <input type="text" name="userName" placeholder="이름 입력" required />
-    </div>
-    <div>
-        <input type="tel" name="phoneNumber" placeholder="전화번호 입력" required />
     </div>
     <div>
         <input type="password" name="password" placeholder="비밀번호 입력" required />
     </div>
     <div>
-        <button type="submit">로그인 하기</button>
+        <button> 로그인 </button>
     </div>
 </form>
+
+    <div>
+        <a href="/user/find_password">비밀번호 찾기</a>
+    </div>
 
 </body>
 </html>

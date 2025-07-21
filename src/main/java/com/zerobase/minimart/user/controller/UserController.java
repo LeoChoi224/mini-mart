@@ -1,12 +1,19 @@
 package com.zerobase.minimart.user.controller;
 
-import com.zerobase.minimart.user.dto.UserInput;
+import com.zerobase.minimart.exception.CustomException;
+import com.zerobase.minimart.user.dto.UserDto;
+import com.zerobase.minimart.user.model.UserInput;
+import com.zerobase.minimart.user.model.UserParam;
 import com.zerobase.minimart.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriUtils;
+
+import java.nio.charset.StandardCharsets;
 
 @RequiredArgsConstructor
 @Controller
@@ -35,10 +42,37 @@ public class UserController {
         }
     }
 
-    @GetMapping("/login")
+    @RequestMapping("/login")
     public String login(UserInput parameter) {
         return "user/login";
     }
+
+    @GetMapping("/info")
+    public String memberInfo(Model model, @AuthenticationPrincipal org.springframework.security.core.userdetails.User userPrincipal) {
+
+        String userId = userPrincipal.getUsername(); // 로그인된 유저 ID
+        UserDto user = userService.info(userId);
+
+        model.addAttribute("user", user);
+        return "user/info";
+    }
+
+    @PostMapping("/user/update")
+    public String updateUser(@ModelAttribute UserInput userInput) {
+        userService.updateUserInfo(userInput);
+        return "redirect:/user/info"; // 또는 성공 페이지
+    }
+
+    @PostMapping("/applySeller")
+    public String applySeller(@RequestParam String userId) {
+        try {
+            userService.applySeller(userId);
+            return "redirect:/user/info?message=" + UriUtils.encode("판매자 신청이 완료되었습니다.", StandardCharsets.UTF_8);
+        } catch (CustomException e) {
+            return "redirect:/user/info?message=" + UriUtils.encode(e.getMessage(), StandardCharsets.UTF_8);
+        }
+    }
+
 
 //    @PostMapping("/signup")
 //    public String signup(@RequestParam String userId) {
