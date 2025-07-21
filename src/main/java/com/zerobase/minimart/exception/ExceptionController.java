@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Slf4j
 public class ExceptionController {
 
-    @ExceptionHandler({
-            CustomException.class
-    })
+    @ExceptionHandler(CustomException.class)
     public ResponseEntity<ExceptionResponse> customRequestException(final CustomException c) {
-        log.warn("api Exception : {}", c.getErrorCode());
-        return ResponseEntity.badRequest().body(new ExceptionResponse(c.getMessage(), c.getErrorCode()));
+        log.warn("API Exception: {}", c.getErrorCode());
+        return ResponseEntity
+                .badRequest()
+                .body(new ExceptionResponse(c.getMessage(), c.getErrorCode()));
     }
 
     @Getter

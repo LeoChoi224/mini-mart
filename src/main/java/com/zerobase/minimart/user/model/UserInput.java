@@ -1,4 +1,4 @@
-package com.zerobase.minimart.user.dto;
+package com.zerobase.minimart.user.model;
 
 import lombok.Data;
 

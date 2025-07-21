@@ -33,7 +33,7 @@ public class User {
     private String resetPasswordKey;
     private LocalDateTime resetPasswordLimitDt;
 
-    private boolean adminYn;
+    private boolean sellerYn;
 
     private String userStatus; // 이용 가능한 상태, 정지 상private boolean email
 
