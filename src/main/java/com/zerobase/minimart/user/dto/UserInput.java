@@ -1,0 +1,14 @@
+package com.zerobase.minimart.user.dto;
+
+import lombok.Data;
+
+@Data
+public class UserInput {
+
+    private String userId;
+    private String userName;
+    private String phoneNumber;
+    private String password;
+    private String rePassword;
+
+}

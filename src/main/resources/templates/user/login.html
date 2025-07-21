@@ -2,18 +2,22 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
-    <title>회원 가입</title>
+    <title>로그인 페이지</title>
 </head>
 <body>
-
-<h1>회원 가입</h1>
+<h1>로그인</h1>
 <div th:replace="fragments/layout.html :: fragment-body-menu"></div>
 
-<!--
-아이디(이메일), 이름, 전화번호, 비밀번호
--->
+<div>
+    <th:block th:if="${signupSuccess}">
+        <script>
+            alert("회원가입이 완료되었습니다.");
+        </script>
+    </th:block>
+</div>
 
-<form method="post" action="/user/signup">
+
+<form method="post" action="/login">
     <div>
         <input type="email" name="userId" placeholder="아이디(이메일) 입력" required />
     </div>
@@ -27,10 +31,7 @@
         <input type="password" name="password" placeholder="비밀번호 입력" required />
     </div>
     <div>
-        <input type="password" name="rePassword" placeholder="확인 비밀번호 입력" required />
-    </div>
-    <div>
-        <button type="submit">회원 가입 하기</button>
+        <button type="submit">로그인 하기</button>
     </div>
 </form>
 
