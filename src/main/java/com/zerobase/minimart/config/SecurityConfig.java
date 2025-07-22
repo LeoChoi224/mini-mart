@@ -37,6 +37,13 @@ public class SecurityConfig {
                                 "/user/signup",
                                 "/user/signup_complete",
                                 "/user/login",
+                                "/user/find_password",
+                                "/user/find/password_result",
+                                "/user/reset_password",
+                                "/user/reset_password_result",
+                                "/user/reset/**",
+                                "/user/reset/password/**",
+                                "/user/updateField",
                                 "/css/**",
                                 "/js/**"
                         ).permitAll()

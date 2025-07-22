@@ -20,15 +20,15 @@ public class UserDto {
     String password;
     LocalDateTime regDt;
 
-//    boolean emailAuthYn;
-//    LocalDateTime emailAuthDt;
-//    String emailAuthKey;
+    boolean emailAuthYn;
+    LocalDateTime emailAuthDt;
+    String emailAuthKey;
 
     String resetPasswordKey;
     LocalDateTime resetPasswordLimitDt;
 
     boolean sellerYn;
-//    String userStatus;
+    String userStatus;
 
     // 추가 컬럼
     long totalCount;
@@ -40,18 +40,18 @@ public class UserDto {
                 .userId(user.getUserId())
                 .userName(user.getUserName())
                 .phoneNumber(user.getPhoneNumber())
-//                .password(user.getPassword())
+                .password(user.getPassword())
 
                 .regDt(user.getRegDt())
-//                .emailAuthYn(user.isEmailAuthYn())
-//                .emailAuthDt(user.getEmailAuthDt())
-//                .emailAuthKey(user.getEmailAuthKey())
+                .emailAuthYn(user.isEmailAuthYn())
+                .emailAuthDt(user.getEmailAuthDt())
+                .emailAuthKey(user.getEmailAuthKey())
 
                 .resetPasswordKey(user.getResetPasswordKey())
                 .resetPasswordLimitDt(user.getResetPasswordLimitDt())
 
-//                .adminYn(user.isAdminYn())
-//                .userStatus(user.getUserStatus())
+                .sellerYn(user.isSellerYn())
+                .userStatus(user.getUserStatus())
 
                 .build();
     }
