@@ -7,4 +7,5 @@ public class ProductInput {
     private String productName;
     private int price;
     private String description;
+
 }
