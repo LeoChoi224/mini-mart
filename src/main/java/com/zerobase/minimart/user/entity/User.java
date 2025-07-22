@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-public class User {
+public class User implements UserCode{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,16 +26,16 @@ public class User {
     private String password;
     private LocalDateTime regDt;
 
-//    private boolean emailAuthYn;
-//    private String emailAuthKey;
-//    private LocalDateTime emailAuthDt;
+    private boolean emailAuthYn;
+    private String emailAuthKey;
+    private LocalDateTime emailAuthDt;
 
     private String resetPasswordKey;
     private LocalDateTime resetPasswordLimitDt;
 
     private boolean sellerYn;
 
-    private String userStatus; // 이용 가능한 상태, 정지 상private boolean email
+    private String userStatus;
 
 
 }

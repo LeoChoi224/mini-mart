@@ -1,37 +1,83 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
+    <meta charset="UTF-8">
     <title>로그인 페이지</title>
+    <style>
+        body {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        th {
+            text-align: left;
+            padding: 10px;
+            background-color: #f5f5f5;
+            width: 150px;
+        }
+        td {
+            padding: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 20px;
+        }
+        .form-container {
+            margin-top: 40px;
+        }
+    </style>
 </head>
 <body>
-<h1>로그인</h1>
-<div th:replace="fragments/layout.html :: fragment-body-menu"></div>
 
-<div>
-    <th:block th:if="${signupSuccess}">
-        <script>
-            alert("회원가입이 완료되었습니다.");
-        </script>
-    </th:block>
+<h1 style="text-align: center;">로그인</h1>
+
+<!-- 회원가입 성공 시 알림 -->
+<div th:if="${signupSuccess}">
+    <script>
+        alert("회원가입이 완료되었습니다.");
+    </script>
 </div>
 
+<!-- 회원 정보 수정 성공 시 알림 -->
+<script th:if="${param.message}" th:inline="javascript">
+    alert([[${param.message}]]);
+</script>
 
-<form method="post">
-    <div>
-        <input type="email" name="userId" placeholder="아이디(이메일) 입력" required />
-    </div>
-    <div>
-        <input type="password" name="password" placeholder="비밀번호 입력" required />
-    </div>
-    <div>
-        <button> 로그인 </button>
-    </div>
-</form>
+<div th:replace="fragments/layout.html :: fragment-body-menu"></div>
 
-    <div>
-        <a href="/user/find_password">비밀번호 찾기</a>
+<div class="form-container">
+    <form method="post" th:action="@{/user/login}">
+        <table>
+            <tbody>
+            <tr>
+                <th>아이디 (이메일)</th>
+                <td><input type="email" name="userId" placeholder="아이디(이메일) 입력" required /></td>
+            </tr>
+            <tr>
+                <th>비밀번호</th>
+                <td><input type="password" name="password" placeholder="비밀번호 입력" required /></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <button type="submit">로그인</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+
+    <div style="text-align: center; margin-top: 10px;">
+        <a th:href="@{/user/find_password}">비밀번호 찾기</a>
     </div>
+</div>
 
 </body>
 </html>

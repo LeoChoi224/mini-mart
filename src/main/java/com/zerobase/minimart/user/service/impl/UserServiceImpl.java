@@ -1,9 +1,11 @@
 package com.zerobase.minimart.user.service.impl;
 
+import com.zerobase.minimart.components.MailService;
 import com.zerobase.minimart.exception.CustomException;
 import com.zerobase.minimart.exception.ErrorCode;
 import com.zerobase.minimart.user.dto.UserDto;
 import com.zerobase.minimart.user.entity.User;
+import com.zerobase.minimart.user.model.ResetPasswordInput;
 import com.zerobase.minimart.user.model.UserInput;
 import com.zerobase.minimart.user.repository.UserRepository;
 import com.zerobase.minimart.user.service.UserService;
@@ -28,12 +30,11 @@ import java.util.UUID;
 @Service
 public class UserServiceImpl implements UserService {
 
-//    private final MailService mailService;
+    private final UserRepository userRepository;
+    private final MailService mailService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    private final UserRepository userRepository;
 
     @Override
     public boolean signUp(UserInput parameter) {
@@ -59,19 +60,46 @@ public class UserServiceImpl implements UserService {
                     .password(encodedPassword)
                     .phoneNumber(parameter.getPhoneNumber())
                     .regDt(LocalDateTime.now())
-                    //                .emailAuthYn(false)
-                    //                .emailAuthKey(uuid)
+                    .emailAuthYn(false)
+                    .emailAuthKey(uuid)
+                    .userStatus(User.USER_STATUS_REQ)
                     .build();
 
             userRepository.save(user);
 
-//        mailService.sendSignupEmail(user.getUserId());
+            String email = parameter.getUserId();
+            String subject = "[mini-mart] 사이트 가입을 축하드립니다. ";
+            String text = "<p>[mini-mart] 사이트 가입을 축하드립니다.</p><p>아래 링크를 클릭하셔서 가입을 완료 하세요. </p>"
+                    + "<div><a target='_blank' href='http://localhost:8080/user/email_auth?uuid=" + uuid + "'> 가입 완료 </a></div>";
+            mailService.sendHtmlMail(email, subject, text);
 
             return true;
         } catch (Exception e) {
             System.out.println("오류" + e.getMessage());
             return false;
         }
+    }
+
+    @Override
+    public boolean emailAuth(String uuid) {
+
+        Optional<User> optionalUser = userRepository.findByEmailAuthKey(uuid);
+        if (!optionalUser.isPresent()) {
+            return false;
+        }
+
+        User user = optionalUser.get();
+
+        if (user.isEmailAuthYn()) {
+            return false;
+        }
+
+        user.setUserStatus(User.USER_STATUS_ING);
+        user.setEmailAuthYn(true);
+        user.setEmailAuthDt(LocalDateTime.now());
+        userRepository.save(user);
+
+        return true;
     }
 
     @Override
@@ -112,6 +140,48 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean checkResetPassword(String uuid) {
+        Optional<User> optionalUser = userRepository.findByResetPasswordKey(uuid);
+
+        if (optionalUser.isEmpty()) {
+            return false;
+        }
+
+        User user = optionalUser.get();
+        LocalDateTime limit = user.getResetPasswordLimitDt();
+
+        if (limit == null || limit.isBefore(LocalDateTime.now())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean resetPassword(String uuid, String newPassword) {
+        Optional<User> optionalUser = userRepository.findByResetPasswordKey(uuid);
+
+        if (optionalUser.isEmpty()) {
+            return false;
+        }
+
+        User user = optionalUser.get();
+        if (user.getResetPasswordLimitDt() == null || user.getResetPasswordLimitDt().isBefore(LocalDateTime.now())) {
+            return false;
+        }
+
+        String encrypted = passwordEncoder.encode(newPassword);  // PasswordEncoder 주입 필요
+        user.setPassword(encrypted);
+
+        // 키와 유효 시간 초기화
+        user.setResetPasswordKey(null);
+        user.setResetPasswordLimitDt(null);
+        userRepository.save(user);
+
+        return true;
+    }
+
+    @Override
     public void applySeller(String userId) {
         Optional<User> optionalUser = userRepository.findByUserId(userId);
 
@@ -129,6 +199,54 @@ public class UserServiceImpl implements UserService {
 
             // ✅ 아직 판매자 등록된 계정이 없을 경우
             user.setSellerYn(true);
+            userRepository.save(user);
+        }
+    }
+
+    @Override
+    public boolean sendResetPassword(ResetPasswordInput parameter) {
+        Optional<User> optionalUser = userRepository.findByUserIdAndUserName(
+                parameter.getUserId(), parameter.getUserName());
+        if (!optionalUser.isPresent()) {
+            throw new UsernameNotFoundException("회원 정보가 존재하지 않습니다.");
+        }
+
+        User user = optionalUser.get();
+
+        String uuid = UUID.randomUUID().toString();
+
+        user.setResetPasswordKey(uuid);
+        user.setResetPasswordLimitDt(LocalDateTime.now().plusDays(1));
+        userRepository.save(user);
+
+        String email = parameter.getUserId();
+        String subject = "[mini-mart] 비밀번호 초기화 메일입니다. ";
+        String text = "<p>[mini-mart] 비밀번호 초기화 메일입니다. </p><p>아래 링크를 클릭하셔서 비밀번호를 초기화 하세요. </p>"
+                + "<div><a target='_blank' href='http://localhost:8080/user/reset_password?id=" + uuid + "'> 비밀번호 초기화 링크 </a></div>";
+        mailService.sendHtmlMail(email, subject, text);
+
+        return true;
+    }
+
+    @Override
+    public void updatePassword(String userId, String newPassword) {
+        Optional<User> optionalUser = userRepository.findByUserId(userId);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            String encrypted = passwordEncoder.encode(newPassword);
+            user.setPassword(encrypted);
+            userRepository.save(user);
+        }
+    }
+
+    @Override
+    public void updatePhoneNumber(String userId, String newPhoneNumber) {
+        Optional<User> optionalUser = userRepository.findByUserId(userId);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setPhoneNumber(newPhoneNumber);
             userRepository.save(user);
         }
     }

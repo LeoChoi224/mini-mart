@@ -1,38 +1,84 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
+    <meta charset="UTF-8">
     <title>회원 가입</title>
+    <style>
+        body {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 10px;
+            background-color: #f5f5f5;
+            width: 150px;
+        }
+
+        td {
+            padding: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 20px;
+        }
+
+        .form-container {
+            margin-top: 40px;
+        }
+    </style>
 </head>
 <body>
 
-<h1>회원 가입</h1>
+<h1 style="text-align: center;">회원 가입</h1>
+
 <div th:replace="fragments/layout.html :: fragment-body-menu"></div>
 
-<!--
-아이디(이메일), 이름, 전화번호, 비밀번호
--->
-
-<form method="post" action="/user/signup">
-    <div>
-        <input type="email" name="userId" placeholder="아이디(이메일) 입력" required />
-    </div>
-    <div>
-        <input type="text" name="userName" placeholder="이름 입력" required />
-    </div>
-    <div>
-        <input type="tel" name="phoneNumber" placeholder="전화번호 입력" required />
-    </div>
-    <div>
-        <input type="password" name="password" placeholder="비밀번호 입력" required />
-    </div>
-    <div>
-        <input type="password" name="rePassword" placeholder="확인 비밀번호 입력" required />
-    </div>
-    <div>
-        <button type="submit">회원 가입 하기</button>
-    </div>
-</form>
+<div class="form-container">
+    <form method="post" action="/user/signup">
+        <table>
+            <tbody>
+            <tr>
+                <th>아이디 (이메일)</th>
+                <td><input type="email" name="userId" placeholder="아이디(이메일) 입력" required /></td>
+            </tr>
+            <tr>
+                <th>이름</th>
+                <td><input type="text" name="userName" placeholder="이름 입력" required /></td>
+            </tr>
+            <tr>
+                <th>전화번호</th>
+                <td><input type="tel" name="phoneNumber" placeholder="전화번호 입력" required /></td>
+            </tr>
+            <tr>
+                <th>비밀번호</th>
+                <td><input type="password" name="password" placeholder="비밀번호 입력" required /></td>
+            </tr>
+            <tr>
+                <th>비밀번호 확인</th>
+                <td><input type="password" name="rePassword" placeholder="확인 비밀번호 입력" required /></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <button type="submit">회원 가입 하기</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
 
 </body>
 </html>
