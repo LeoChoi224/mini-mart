@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 등록</title>
+    <style>
+        body {
+            text-align: center;
+        }
+        table {
+            width: 60%;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+        }
+        input[type="text"], input[type="number"], textarea {
+            width: 95%;
+            padding: 8px;
+        }
+        button {
+            padding: 8px 16px;
+            margin-top: 12px;
+        }
+        h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="fragments/layout.html :: fragment-seller-body-menu"></div>
+
+<h1>상품 등록</h1>
+
+<form method="post" th:action="@{/order/seller/product/add}">
+    <table>
+        <tr>
+            <th>상품명</th>
+            <td><input type="text" name="productName" placeholder="상품명을 입력하세요" required></td>
+        </tr>
+        <tr>
+            <th>가격</th>
+            <td><input type="number" name="price" placeholder="가격을 입력하세요" required></td>
+        </tr>
+        <tr>
+            <th>상세 설명</th>
+            <td><textarea name="description" rows="6" placeholder="상세 정보를 입력하세요" required></textarea></td>
+        </tr>
+    </table>
+    <div>
+        <button type="submit">등록하기</button>
+    </div>
+</form>
+
+</body>
+</html>
