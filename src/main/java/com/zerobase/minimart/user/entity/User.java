@@ -36,6 +36,4 @@ public class User implements UserCode{
     private boolean sellerYn;
 
     private String userStatus;
-
-
 }
