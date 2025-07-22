@@ -20,11 +20,16 @@ public class SellerServiceImpl implements SellerService {
     @Override
     public void add(@ModelAttribute ProductInput parameter, String userId) {
         Product product = Product.builder()
+                .userId(userId)
                 .productName(parameter.getProductName())
                 .price(parameter.getPrice())
                 .description(parameter.getDescription())
-                .userId(userId)
+                .imageUrl(parameter.getImageUrl())
+                .category(parameter.getCategory())
+                .stock(parameter.getStock())
+                .status(parameter.getStatus())
                 .regDt(LocalDateTime.now())
+                .updateDt(LocalDateTime.now())
                 .build();
 
         sellerRepository.save(product);

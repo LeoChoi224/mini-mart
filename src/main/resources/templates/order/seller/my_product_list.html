@@ -2,40 +2,68 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>나의 판매 상품 목록</title>
+    <title>판매 상품 목록</title>
+    <style>
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        img {
+            width: 80px;
+        }
+
+        .action-buttons button {
+            margin: 0 4px;
+        }
+    </style>
 </head>
 <body>
 
-<!-- alert 이 안 뜸 나중에 해결! -->
-<script th:if="${message}">
-    alert([[${message}]]);
-</script>
+<div th:replace="~{fragments/layout.html :: fragment-seller-body-menu}"></div>
 
-<h1>나의 판매 상품 목록</h1>
+<h1 style="text-align:center;">판매 상품 목록</h1>
 
-<div th:replace="fragments/layout.html :: fragment-seller-body-menu"></div>
-
-<table border="1">
+<table>
     <thead>
     <tr>
+        <th>이미지</th>
         <th>상품명</th>
         <th>가격</th>
-        <th>설명</th>
-        <th>등록일</th>
-        <th>수정일</th>
+        <th>카테고리</th>
+        <th>상태</th>
+        <th>관리</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="item : ${products}">
+        <td>
+            <img th:if="${item.imageUrl}" th:src="@{${item.imageUrl}}" alt="이미지" width="80"/>
+            <span th:if="${item.imageUrl == null}">-</span>
+        </td>
         <td th:text="${item.productName}">상품명</td>
         <td th:text="${item.price}">가격</td>
-        <td th:text="${item.description}">설명</td>
-        <td th:text="${#temporals.format(item.regDt, 'yyyy-MM-dd HH:mm')}">등록일</td>
-        <td th:text="${#temporals.format(item.updateDt, 'yyyy-MM-dd HH:mm')}">수정일</td>
+        <td th:text="${item.category}">카테고리</td>
+        <td>
+            <select name="status" disabled>
+                <option th:selected="${item.status == '판매중'}">판매중</option>
+                <option th:selected="${item.status == '품절'}">품절</option>
+            </select>
+        </td>
+        <td class="action-buttons">
+            <button type="button">수정</button>
+            <button type="button">삭제</button>
+        </td>
     </tr>
     </tbody>
 </table>
-
 
 </body>
 </html>

@@ -1,42 +1,17 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>상품 등록</title>
-    <style>
-        body {
-            text-align: center;
-        }
-        table {
-            width: 60%;
-            margin: auto;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 12px;
-            border: 1px solid #ccc;
-        }
-        input[type="text"], input[type="number"], textarea {
-            width: 95%;
-            padding: 8px;
-        }
-        button {
-            padding: 8px 16px;
-            margin-top: 12px;
-        }
-        h1 {
-            text-align: center;
-        }
-    </style>
 </head>
 <body>
 
+<div th:replace="~{fragments/layout.html :: fragment-seller-body-menu}"></div>
+
 <h1>상품 등록</h1>
 
-<div th:replace="fragments/layout.html :: fragment-seller-body-menu"></div>
-
 <form method="post" th:action="@{/order/seller/product_add}">
-    <table>
+    <table align="center" border="1" cellpadding="10">
         <tr>
             <th>상품명</th>
             <td><input type="text" name="productName" placeholder="상품명을 입력하세요" required></td>
@@ -49,12 +24,39 @@
             <th>상세 설명</th>
             <td><textarea name="description" rows="6" placeholder="상세 정보를 입력하세요" required></textarea></td>
         </tr>
+        <tr>
+            <th>이미지 URL</th>
+            <td><input type="text" name="imageUrl" placeholder="이미지 주소를 입력하세요" /></td>
+        </tr>
+        <tr>
+            <th>카테고리</th>
+            <td>
+                <select name="category">
+                    <option value="전자제품">전자제품</option>
+                    <option value="패션">패션</option>
+                    <option value="식품">식품</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>재고 수량</th>
+            <td><input type="number" name="stock" required /></td>
+        </tr>
+        <tr>
+            <th>판매 상태</th>
+            <td>
+                <select name="status">
+                    <option value="판매중">판매중</option>
+                    <option value="품절">품절</option>
+                </select>
+            </td>
+        </tr>
     </table>
-    <div>
+
+    <div style="text-align: center; margin-top: 16px;">
         <button type="submit">등록하기</button>
     </div>
 </form>
-
 
 </body>
 </html>
