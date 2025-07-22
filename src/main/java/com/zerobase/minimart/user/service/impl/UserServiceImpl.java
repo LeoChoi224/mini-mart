@@ -262,7 +262,7 @@ public class UserServiceImpl implements UserService {
         User user = optionalUser.get();
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
 
         if (user.isSellerYn()) {
             grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_SELLER"));
@@ -270,20 +270,5 @@ public class UserServiceImpl implements UserService {
 
         return new org.springframework.security.core.userdetails.User(user.getUserId(), user.getPassword(), grantedAuthorities);
     }
-
-//    private String getRandomCode() {
-//        return RandomStringUtils.random(10, true, true);
-//    }
-//
-//    private String getVerificationEmailBody(String email, String name, String type, String code) {
-//        StringBuilder builder = new StringBuilder();
-//        return builder.append("Hello ")
-//                .append(name)
-//                .append("! Please Click Link for verification.\n\n")
-//                .append("http://localhost:8080/user/signup/" + type + "/verify?email=")
-//                .append(email)
-//                .append("&code=")
-//                .append(code).toString();
-//    }
 
 }
