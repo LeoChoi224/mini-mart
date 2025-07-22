@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>나의 판매 상품 목록</title>
+</head>
+<body>
+
+<!-- alert 이 안 뜸 나중에 해결! -->
+<script th:if="${message}">
+    alert([[${message}]]);
+</script>
+
+<h1>나의 판매 상품 목록</h1>
+
+<div th:replace="fragments/layout.html :: fragment-seller-body-menu"></div>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>상품명</th>
+        <th>가격</th>
+        <th>설명</th>
+        <th>등록일</th>
+        <th>수정일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${products}">
+        <td th:text="${item.productName}">상품명</td>
+        <td th:text="${item.price}">가격</td>
+        <td th:text="${item.description}">설명</td>
+        <td th:text="${#temporals.format(item.regDt, 'yyyy-MM-dd HH:mm')}">등록일</td>
+        <td th:text="${#temporals.format(item.updateDt, 'yyyy-MM-dd HH:mm')}">수정일</td>
+    </tr>
+    </tbody>
+</table>
+
+
+</body>
+</html>

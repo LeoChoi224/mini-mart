@@ -31,9 +31,9 @@
 </head>
 <body>
 
-<div th:replace="fragments/layout.html :: fragment-seller-body-menu"></div>
-
 <h1>상품 등록</h1>
+
+<div th:replace="fragments/layout.html :: fragment-seller-body-menu"></div>
 
 <form method="post" th:action="@{/order/seller/product_add}">
     <table>
@@ -54,6 +54,7 @@
         <button type="submit">등록하기</button>
     </div>
 </form>
+
 
 </body>
 </html>

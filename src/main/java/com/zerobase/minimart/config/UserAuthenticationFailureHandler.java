@@ -24,7 +24,7 @@ public class UserAuthenticationFailureHandler extends SimpleUrlAuthenticationFai
             Throwable cause = exception.getCause();
 
             if (cause instanceof CustomException customEx) {
-                msg = customEx.getMessage(); // ✅ CustomException 에러 메시지 사용
+                msg = customEx.getMessage();
             } else if (cause instanceof UsernameNotFoundException) {
                 msg = cause.getMessage();
             } else {

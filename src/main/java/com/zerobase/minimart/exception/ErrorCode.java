@@ -17,5 +17,5 @@ public enum ErrorCode {
     NOT_ENOUGH_BALANCE("잔액이 부족합니다."),
     ALREADY_SELLER_PHONE("이미 해당 번호로 등록된 판매자 계정이 존재합니다.");
 
-    private final String message;  // detail 대신 message로 변경해도 무방
+    private final String message;
 }

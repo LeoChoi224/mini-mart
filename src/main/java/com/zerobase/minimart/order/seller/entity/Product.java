@@ -17,6 +17,9 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String userId;  // 등록자 이메일
+
     private String productName;
     private int price;
     private String description;
