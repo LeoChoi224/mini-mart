@@ -1,7 +1,7 @@
 package com.zerobase.minimart.order.seller.controller;
 
 import com.zerobase.minimart.order.seller.model.ProductInput;
-import com.zerobase.minimart.order.seller.service.ProductService;
+import com.zerobase.minimart.order.seller.service.SellerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,25 +10,25 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/order/seller")
-public class ProductController {
+public class SellerController {
 
-    private final ProductService productService;
+    private final SellerService sellerService;
 
     @GetMapping("/main")
     public String mainPage(Model model) {
         return "order/seller/main";
     }
 
-    @GetMapping("/product/add")
+    @GetMapping("/product_add")
     public String addProductForm() {
-        return "order/seller/add";
+        return "order/seller/product_add";
     }
 
-    @PostMapping("/product/add")
+    @PostMapping("/product_add")
     public String addProductSubmit(@ModelAttribute ProductInput parameter,
                                    Model model) {
-        productService.add(parameter);
+        sellerService.add(parameter);
         model.addAttribute("message", "상품이 성공적으로 등록되었습니다.");
-        return "redirect:/order/seller/product/add";
+        return "redirect:/order/seller/product_add";
     }
 }

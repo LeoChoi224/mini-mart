@@ -3,5 +3,5 @@ package com.zerobase.minimart.order.seller.repository;
 import com.zerobase.minimart.order.seller.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface sellerRepository extends JpaRepository<Product, Long> {
 }

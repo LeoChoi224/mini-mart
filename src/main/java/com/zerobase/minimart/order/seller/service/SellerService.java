@@ -2,6 +2,6 @@ package com.zerobase.minimart.order.seller.service;
 
 import com.zerobase.minimart.order.seller.model.ProductInput;
 
-public interface ProductService {
+public interface SellerService {
     void add(ProductInput parameter);
 }
