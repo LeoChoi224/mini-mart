@@ -24,6 +24,12 @@ public class Product {
     private int price;
     private String description;
 
+    private String imageUrl;
+    private String category;
+    private int stock;
+    private String status; // 판매 상태 (예: 판매중, 품절 등)
+
+
     private LocalDateTime regDt;
     private LocalDateTime updateDt;
 }

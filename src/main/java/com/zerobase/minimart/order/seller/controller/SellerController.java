@@ -26,6 +26,7 @@ public class SellerController {
 
     @GetMapping("/product_add")
     public String addProductForm() {
+        
         return "order/seller/product_add";
     }
 
