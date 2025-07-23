@@ -6,13 +6,13 @@
 </head>
 <body>
 
-    <div th:fragment="fragment-body-menu">
+    <div th:fragment="fragment-body-menu" style="text-align: center;">
         <div>
             <a href="/user/signup"> 회원 가입 </a>
             |
-            <a href="/user/info"> 회원 정보 </a>
+            <a href="/user/info"> 마이 페이지 </a>
             |
-            <a href="/user/"> 상품 목록 </a>
+            <a href="/order/common/search"> 상품 검색 </a>
             |
             <a href="/user/login"> 로그인 </a>
             |
@@ -26,14 +26,14 @@
     </div>
 
 
-    <div th:fragment="fragment-seller-body-menu">
+    <div th:fragment="fragment-seller-body-menu" style="text-align: center;">
         <a href="/order/seller/main"> 판매자 메인 </a>
         |
         <a href="/order/seller/product/add"> 상품 등록 </a>
         |
         <a href="/order/seller/product/my_list"> 나의 판매 내역 </a>
         |
-        <a href="/order/common/*"> 상품 검색 </a>
+        <a href="/order/common/search"> 상품 검색 </a>
         |
         <a href="/user/logout"> 로그아웃 </a>
         <dr/>
