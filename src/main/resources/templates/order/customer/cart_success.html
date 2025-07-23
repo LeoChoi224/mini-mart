@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/layout.html :: fragment-head('장바구니 담기 완료')">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+<body>
+
+<div th:replace="fragments/layout.html :: fragment-customer-body-menu"></div>
+<div class="container text-center">
+    <h1>✅ 장바구니에 담겼습니다!</h1>
+
+    <p th:if="${productName != null}">
+        <strong th:text="${productName}"></strong> 상품이 장바구니에 추가되었습니다.
+    </p>
+
+    <div class="button-group">
+        <a href="/" class="button">홈으로 가기</a>
+        <a href="/order/customer/cart" class="button">장바구니로 이동</a>
+        <a href="/order/common/search" class="button">상품 계속 보기</a>
+    </div>
+</div>
+
+<div th:replace="fragments/layout.html :: common-footer"></div>
+</body>
+</html>

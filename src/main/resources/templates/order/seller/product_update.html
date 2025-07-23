@@ -40,12 +40,13 @@
             padding: 8px 20px;
         }
     </style>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
 
 <h1>판매 상품 상세 / 수정</h1>
 
-<div th:replace="~{fragments/layout.html :: fragment-seller-body-menu}"></div>
+<div th:replace="~{fragments/layout.html :: fragment-sellr-body-menu}"></div>
 
 <div class="container">
     <!-- 이미지 영역 -->
@@ -95,5 +96,6 @@
     </div>
 </div>
 
+<div th:replace="fragments/layout.html :: common-footer"></div>
 </body>
 </html>

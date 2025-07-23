@@ -1,5 +1,6 @@
 package com.zerobase.minimart.user.controller;
 
+import com.zerobase.minimart.config.UserPrincipal;
 import com.zerobase.minimart.exception.CustomException;
 import com.zerobase.minimart.user.dto.UserDto;
 import com.zerobase.minimart.user.model.ResetPasswordInput;
@@ -53,15 +54,11 @@ public class UserController {
         return "user/email_auth";
     }
 
-    @RequestMapping("/login")
-    public String login(UserInput parameter) {
-        return "user/login";
-    }
-
     @GetMapping("/info")
-    public String memberInfo(Model model, @AuthenticationPrincipal org.springframework.security.core.userdetails.User userPrincipal) {
+    public String memberInfo(Model model,
+                             @AuthenticationPrincipal UserPrincipal userPrincipal) {
 
-        String userId = userPrincipal.getUsername(); // 로그인된 유저 ID
+        String userId = userPrincipal.getUsername(); // 또는 userPrincipal.getUser().getUserId()
         UserDto user = userService.info(userId);
 
         model.addAttribute("user", user);

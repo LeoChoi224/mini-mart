@@ -2,14 +2,11 @@ package com.zerobase.minimart.order.common.controller;
 
 import com.zerobase.minimart.order.common.model.ProductSearchInput;
 import com.zerobase.minimart.order.common.service.CommonService;
-import com.zerobase.minimart.order.seller.entity.Product;
+import com.zerobase.minimart.order.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,8 +31,8 @@ public class CommonController {
         return "order/common/product_list";
     }
 
-    @GetMapping("/detail/{id}")
-    public String detail(@PathVariable Long id, Model model) {
+    @GetMapping("/detail")
+    public String detail(@RequestParam Long id, Model model) {
         Product product = commonService.getProductDetail(id);
         model.addAttribute("product", product);
         return "order/common/product_detail";

@@ -1,6 +1,7 @@
 package com.zerobase.minimart.user.service;
 
 import com.zerobase.minimart.user.dto.UserDto;
+import com.zerobase.minimart.user.entity.User;
 import com.zerobase.minimart.user.model.ResetPasswordInput;
 import com.zerobase.minimart.user.model.UserInput;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -56,4 +57,9 @@ public interface UserService extends UserDetailsService {
      * 마이 페이지 전화번호 변경
      */
     void updatePhoneNumber(String userId, String newPhoneNumber);
+
+    /**
+     * 유저 ID로 유저 조회
+     */
+    User findByUserId(String userId);
 }

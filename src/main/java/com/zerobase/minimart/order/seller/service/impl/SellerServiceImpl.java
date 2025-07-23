@@ -1,9 +1,10 @@
 package com.zerobase.minimart.order.seller.service.impl;
 
-import com.zerobase.minimart.order.seller.entity.Product;
+import com.zerobase.minimart.order.entity.Product;
 import com.zerobase.minimart.order.seller.model.ProductInput;
 import com.zerobase.minimart.order.seller.repository.SellerRepository;
 import com.zerobase.minimart.order.seller.service.SellerService;
+import com.zerobase.minimart.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -85,6 +86,11 @@ public class SellerServiceImpl implements SellerService {
         sellerRepository.save(product);
 
         return true;
+    }
+
+    @Override
+    public void doSomething(User user) {
+        System.out.println("판매자 ID: " + user.getUserId());
     }
 
 

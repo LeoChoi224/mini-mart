@@ -2,6 +2,7 @@ package com.zerobase.minimart.config;
 
 import com.zerobase.minimart.user.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +23,10 @@ public class SecurityConfig {
     private final UserServiceImpl userServiceImpl;
     private final PasswordEncoder passwordEncoder;
 
+    // 커스텀 로그인 성공 핸들러 주입
+    @Autowired
+    private LoginSuccessHandler loginSuccessHandler;
+
     // 로그인 실패 핸들러
     @Bean
     public UserAuthenticationFailureHandler getFailureHandler() {
@@ -34,6 +39,7 @@ public class SecurityConfig {
         return new CustomAccessDeniedHandler();
     }
 
+
     // 보안 필터 체인
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -41,22 +47,27 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 일반 허용 경로
                         .requestMatchers(
-                                "/", "/user/**", "/css/**", "/js/**"
+                                "/", "/user/**", "/order/common/**",  "/css/**", "/js/**", "/images/**"
                         ).permitAll()
 
                         // 판매자만 접근 허용
                         .requestMatchers("/order/seller/**")
                         .hasRole("SELLER")
 
+                        // 구매자만 접근 허용
+                        .requestMatchers("/order/customer/**")
+                        .hasRole("CUSTOMER")
+
                         // 그 외는 인증 필요
                         .anyRequest().authenticated()
                 )
                 // 로그인 설정
                 .formLogin(form -> form
-                        .loginPage("/user/login")
+                        .loginPage("/")
+                        .loginProcessingUrl("/user/login")
                         .usernameParameter("userId")   // "username" 대신 "userId"로 처리
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/", true)
+                        .successHandler(loginSuccessHandler)
                         .failureHandler(getFailureHandler())
                         .permitAll()
                 )

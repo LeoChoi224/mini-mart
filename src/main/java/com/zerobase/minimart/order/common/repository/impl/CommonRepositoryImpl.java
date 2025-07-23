@@ -3,7 +3,7 @@ package com.zerobase.minimart.order.common.repository.impl;
 import com.zerobase.minimart.order.common.model.ProductSearchInput;
 import com.zerobase.minimart.order.common.model.ProductSearchResult;
 import com.zerobase.minimart.order.common.repository.CommonRepository;
-import com.zerobase.minimart.order.seller.entity.Product;
+import com.zerobase.minimart.order.entity.Product;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
