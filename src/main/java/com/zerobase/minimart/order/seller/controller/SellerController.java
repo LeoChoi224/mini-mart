@@ -24,13 +24,13 @@ public class SellerController {
         return "order/seller/main";
     }
 
-    @GetMapping("/product_add")
+    @GetMapping("/product/add")
     public String addProductForm() {
-        
+
         return "order/seller/product_add";
     }
 
-    @PostMapping("/product_add")
+    @PostMapping("/product/add")
     public String addProductSubmit(@ModelAttribute ProductInput parameter,
                                    Principal principal,
                                    RedirectAttributes redirectAttributes
@@ -40,10 +40,10 @@ public class SellerController {
         sellerService.add(parameter, userId);
 
         redirectAttributes.addFlashAttribute("message", "상품이 성공적으로 등록되었습니다.");
-        return "redirect:/order/seller/my_product_list";
+        return "redirect:/order/seller/product/my_list";
     }
 
-    @GetMapping("/my_product_list")
+    @GetMapping("/product/my_list")
     public String myProducts(Model model, Principal principal,
                              @ModelAttribute("message") String message) {
 
@@ -51,8 +51,58 @@ public class SellerController {
         List<Product> productList = sellerService.getProductsByUser(userId);
 
         model.addAttribute("products", productList);
-        model.addAttribute("message", message);
 
         return "order/seller/my_product_list";
     }
+
+    @PostMapping("/product/status")
+    public String updateStatus(@RequestParam Long id,
+                               @RequestParam String status,
+                               RedirectAttributes redirectAttributes) {
+        sellerService.updateStatus(id, status);
+        redirectAttributes.addFlashAttribute("message", "상태가 변경되었습니다.");
+        return "redirect:/order/seller/product/my_list";
+    }
+
+    @GetMapping("/product/delete/{id}")
+    public String deleteProduct(@PathVariable Long id,
+                                RedirectAttributes redirectAttributes) {
+        sellerService.deleteProduct(id);
+        redirectAttributes.addFlashAttribute("message", "상품이 삭제되었습니다.");
+        return "redirect:/order/seller/product/my_list";
+    }
+
+    @GetMapping("/product/update/{id}")
+    public String detailPage(@PathVariable Long id, Model model) {
+        Product product = sellerService.getProduct(id);
+        model.addAttribute("product", product);
+        return "order/seller/product_update";
+    }
+
+    @PostMapping("/product/update/{id}")
+    public String updateProduct(@PathVariable Long id,
+                                @ModelAttribute ProductInput parameter,
+                                Principal principal,
+                                RedirectAttributes redirectAttributes) {
+        String userId = principal.getName();
+
+        // URL의 ID와 form 데이터의 ID가 다를 경우 (수정 조작, 오작동 등 방지)
+        if (!id.equals(parameter.getId())) {
+            // 해킹, 실수 등으로 의심되는 상황 → 처리 중단
+            redirectAttributes.addFlashAttribute("message", "잘못된 접근입니다.");
+            return "redirect:/order/seller/product/my_list";
+        }
+
+        boolean result = sellerService.update(parameter, userId);
+
+        if (result) {
+            redirectAttributes.addFlashAttribute("message", "상품이 성공적으로 수정되었습니다.");
+        } else {
+            redirectAttributes.addFlashAttribute("message", "상품 수정에 실패했습니다.");
+        }
+
+        return "redirect:/order/seller/product/update/" + id;
+    }
+
+
 }

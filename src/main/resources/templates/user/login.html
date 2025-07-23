@@ -51,7 +51,7 @@
     alert([[${param.message}]]);
 </script>
 
-<div th:replace="fragments/layout.html :: fragment-body-menu"></div>
+<div th:replace="~{fragments/layout.html :: fragment-body-menu}"></div>
 
 <div class="form-container">
     <form method="post" th:action="@{/user/login}">

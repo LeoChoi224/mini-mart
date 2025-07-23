@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -38,6 +39,52 @@ public class SellerServiceImpl implements SellerService {
     @Override
     public List<Product> getProductsByUser(String userId) {
         return sellerRepository.findByUserId(userId);
+    }
+
+
+    @Override
+    public void updateStatus(Long id, String status) {
+        Product product = sellerRepository.findById(id).orElseThrow();
+        product.setStatus(status);
+        product.setUpdateDt(LocalDateTime.now());
+        sellerRepository.save(product);
+    }
+
+    @Override
+    public void deleteProduct(Long id) {
+        sellerRepository.deleteById(id);
+    }
+
+    @Override
+    public Product getProduct(Long id) {
+        return sellerRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public boolean update(ProductInput parameter, String userId) {
+
+        Optional<Product> optionalProduct = sellerRepository.findById(parameter.getId());
+        if (optionalProduct.isEmpty()) {
+            return false;
+        }
+
+        Product product = optionalProduct.get();
+
+        if (!product.getUserId().equals(userId)) {
+            return false;
+        }
+
+        product.setProductName(parameter.getProductName());
+        product.setPrice(parameter.getPrice());
+        product.setCategory(parameter.getCategory());
+        product.setStock(parameter.getStock());
+        product.setStatus(parameter.getStatus());
+        product.setDescription(parameter.getDescription());
+        product.setUpdateDt(LocalDateTime.now());
+
+        sellerRepository.save(product);
+
+        return true;
     }
 
 
