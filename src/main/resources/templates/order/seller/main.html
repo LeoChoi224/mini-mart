@@ -9,13 +9,15 @@
             text-align: center;
         }
     </style>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
     <h1>미니 마켓 판매자 페이지</h1>
 
-    <div th:replace="~{fragments/layout.html :: fragment-seller-body-menu}"></div>
+    <div th:replace="~{fragments/layout.html :: fragment-sellr-body-menu}"></div>
 
+    <p th:text="'환영합니다, ' + ${userName} + '님!'"></p>
 
-
+    <div th:replace="fragments/layout.html :: common-footer"></div>
 </body>
 </html>

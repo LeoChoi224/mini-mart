@@ -4,7 +4,7 @@ import com.zerobase.minimart.order.common.model.ProductSearchInput;
 import com.zerobase.minimart.order.common.model.ProductSearchResult;
 import com.zerobase.minimart.order.common.repository.CommonRepository;
 import com.zerobase.minimart.order.common.service.CommonService;
-import com.zerobase.minimart.order.seller.entity.Product;
+import com.zerobase.minimart.order.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

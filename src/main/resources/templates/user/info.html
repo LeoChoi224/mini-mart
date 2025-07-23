@@ -31,6 +31,7 @@
             margin-left: 10px;
         }
     </style>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
 
@@ -39,8 +40,8 @@
 </script>
 
 <h1>회원 정보</h1>
-<div th:replace="~{fragments/layout.html :: fragment-body-menu}"></div>
 
+<div th:replace="~{fragments/layout.html :: fragment-body-menu}"></div>
 
 <table>
     <tbody>
@@ -109,6 +110,6 @@
     </tbody>
 </table>
 
-
+<div th:replace="fragments/layout.html :: common-footer"></div>
 </body>
 </html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/layout.html :: fragment-head('나의 구매 내역')">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+<body>
+<div th:replace="fragments/layout.html :: fragment-customer-body-menu"></div>
+
+<div class="container">
+    <h1>📜 나의 구매 내역</h1>
+
+    <div th:if="${orderList.isEmpty()}">
+        <p>구매 내역이 없습니다.</p>
+        <a href="/" class="button">상품 보러 가기</a>
+    </div>
+
+    <div th:unless="${orderList.isEmpty()}">
+        <table class="cart-table">
+            <thead>
+            <tr>
+                <th>상품명</th>
+                <th>수량</th>
+                <th>결제 금액</th>
+                <th>결제 일시</th>
+                <th>주문 상태</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orderList}">
+                <td th:text="${order.productName}"></td>
+                <td th:text="${order.quantity}"></td>
+                <td th:text="${order.totalPrice} + '원'"></td>
+                <td th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
+                <td th:text="${order.status}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div th:replace="fragments/layout.html :: common-footer"></div>
+</body>
+</html>

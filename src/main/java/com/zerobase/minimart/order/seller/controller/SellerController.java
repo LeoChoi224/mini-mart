@@ -1,9 +1,12 @@
 package com.zerobase.minimart.order.seller.controller;
 
-import com.zerobase.minimart.order.seller.entity.Product;
+import com.zerobase.minimart.config.UserPrincipal;
+import com.zerobase.minimart.order.entity.Product;
 import com.zerobase.minimart.order.seller.model.ProductInput;
 import com.zerobase.minimart.order.seller.service.SellerService;
+import com.zerobase.minimart.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +23,10 @@ public class SellerController {
     private final SellerService sellerService;
 
     @GetMapping("/main")
-    public String mainPage(Model model) {
-        return "order/seller/main";
+    public String sellerMainPage(Model model, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        User user = userPrincipal.getUser(); // ← 핵심 수정 포인트
+        model.addAttribute("userName", user.getUserName());
+        return "order/seller/main"; // main.html에 userName 출력 예시 포함 가능
     }
 
     @GetMapping("/product/add")
@@ -65,7 +70,7 @@ public class SellerController {
     }
 
     @GetMapping("/product/delete/{id}")
-    public String deleteProduct(@PathVariable Long id,
+    public String deleteProduct(@PathVariable  Long id,
                                 RedirectAttributes redirectAttributes) {
         sellerService.deleteProduct(id);
         redirectAttributes.addFlashAttribute("message", "상품이 삭제되었습니다.");
@@ -73,14 +78,14 @@ public class SellerController {
     }
 
     @GetMapping("/product/update/{id}")
-    public String detailPage(@PathVariable Long id, Model model) {
+    public String detailPage(@PathVariable  Long id, Model model) {
         Product product = sellerService.getProduct(id);
         model.addAttribute("product", product);
         return "order/seller/product_update";
     }
 
     @PostMapping("/product/update/{id}")
-    public String updateProduct(@PathVariable Long id,
+    public String updateProduct(@PathVariable  Long id,
                                 @ModelAttribute ProductInput parameter,
                                 Principal principal,
                                 RedirectAttributes redirectAttributes) {

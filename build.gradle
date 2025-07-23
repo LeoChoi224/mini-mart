@@ -42,6 +42,9 @@ dependencies {
     // Thymeleaf 템플릿 (HTML로 화면 그리기)
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
+    // Thymeleaf + Spring Security 연동
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+
     // 자바 메일 서비스
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
@@ -52,13 +55,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    // FeignClient
-//    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-
     implementation 'org.apache.commons:commons-lang3:3.18.0'
 
     // 폼 검증용
-//    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 
 tasks.named('test') {

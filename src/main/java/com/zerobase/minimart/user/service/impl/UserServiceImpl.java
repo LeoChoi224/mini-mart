@@ -1,6 +1,7 @@
 package com.zerobase.minimart.user.service.impl;
 
 import com.zerobase.minimart.components.MailService;
+import com.zerobase.minimart.config.UserPrincipal;
 import com.zerobase.minimart.exception.CustomException;
 import com.zerobase.minimart.exception.ErrorCode;
 import com.zerobase.minimart.user.dto.UserDto;
@@ -11,8 +12,6 @@ import com.zerobase.minimart.user.repository.UserRepository;
 import com.zerobase.minimart.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -21,8 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -253,22 +250,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
         Optional<User> optionalUser = userRepository.findByUserId(username);
-        if (!optionalUser.isPresent()) {
+        if (optionalUser.isEmpty()) {
             throw new UsernameNotFoundException("회원 정보가 존재하지 않습니다.");
         }
 
-        User user = optionalUser.get();
-
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
-
-        if (user.isSellerYn()) {
-            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_SELLER"));
-        }
-
-        return new org.springframework.security.core.userdetails.User(user.getUserId(), user.getPassword(), grantedAuthorities);
+        return new UserPrincipal(optionalUser.get());
     }
 
+    public User findByUserId(String userId) {
+        return userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+    }
 }

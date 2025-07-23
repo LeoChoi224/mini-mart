@@ -22,12 +22,13 @@
             margin: 0 4px;
         }
     </style>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
 
 <h1 style="text-align:center;">판매 상품 목록</h1>
 
-<div th:replace="~{fragments/layout.html :: fragment-seller-body-menu}"></div>
+<div th:replace="~{fragments/layout.html :: fragment-sellr-body-menu}"></div>
 
 <!-- 메시지 알림 안 뜸 수정해야함!! -->
 <!--<script th:if="${message}">-->
@@ -46,29 +47,29 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="item : ${products}">
+    <tr th:each="product : ${products}">
         <td>
-            <img th:if="${item.imageUrl}" th:src="@{${item.imageUrl}}" alt="이미지"/>
-            <span th:if="${item.imageUrl == null}">-</span>
+            <img th:if="${product.imageUrl}" th:src="@{${product.imageUrl}}" alt="이미지"/>
+            <span th:if="${product.imageUrl == null}">-</span>
         </td>
-        <td th:text="${item.productName}">상품명</td>
-        <td th:text="${item.price}">가격</td>
-        <td th:text="${item.category}">카테고리</td>
+        <td th:text="${product.productName}">상품명</td>
+        <td th:text="${product.price}">가격</td>
+        <td th:text="${product.category}">카테고리</td>
         <td>
             <form th:action="@{/order/seller/product/status}" method="post">
-                <input type="hidden" name="id" th:value="${item.id}" />
+                <input type="hidden" name="id" th:value="${product.id}" />
                 <select name="status">
-                    <option value="판매중" th:selected="${item.status == '판매중'}">판매중</option>
-                    <option value="품절" th:selected="${item.status == '품절'}">품절</option>
+                    <option value="판매중" th:selected="${product.status == '판매중'}">판매중</option>
+                    <option value="품절" th:selected="${product.status == '품절'}">품절</option>
                 </select>
                 <button type="submit">저장</button>
             </form>
         </td>
         <td class="action-buttons">
-            <form th:action="@{/order/seller/product/update/{id}(id=${item.id})}" method="get">
+            <form th:action="@{/order/seller/product/update/{id}(id=${product.id})}" method="get">
                 <button type="submit">수정</button>
             </form>
-            <form th:action="@{/order/seller/product/delete/{id}(id=${item.id})}" method="get"
+            <form th:action="@{/order/seller/product/delete/{id}(id=${product.id})}" method="get"
                   onsubmit="return confirm('정말 삭제하시겠습니까?');">
                 <button type="submit">삭제</button>
             </form>
@@ -77,5 +78,6 @@
     </tbody>
 </table>
 
+<div th:replace="fragments/layout.html :: common-footer"></div>
 </body>
 </html>

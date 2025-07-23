@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/layout.html :: common-head('상품 검색')"></head>
+<body>
+
+<div class="container">
+    <h6>
+        <img src="/images/minimart-title.png" alt="Mini Mart" style="width: 700px; height: 200px;">
+    </h6>
+
+<div th:replace="~{fragments/layout.html :: fragment-customer-body-menu}"></div>
+
+    <form th:action="@{/order/common/list}" method="get" class="search-bar">
+        <select name="category" th:value="${input.category}">
+            <option value="">전체 카테고리</option>
+            <option value="전자제품" th:selected="${input.category == '전자제품'}">전자제품</option>
+            <option value="식품" th:selected="${input.category == '식품'}">식품</option>
+            <option value="의류" th:selected="${input.category == '의류'}">의류</option>
+        </select>
+        <input type="text" name="keyword" placeholder="원하시는 상품을 검색해보세요" th:value="${input.keyword}" />
+        <button type="submit">검색</button>
+    </form>
+
+    <div class="tags">
+        <div class="tag">베스트 상품</div>
+        <div class="tag">신상품</div>
+        <div class="tag">할인 상품</div>
+        <div class="tag">추천 상품</div>
+        <div class="tag">행사 상품</div>
+    </div>
+</div>
+
+<div th:replace="fragments/layout.html :: common-footer"></div>
+</body>
+</html>

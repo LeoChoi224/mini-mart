@@ -1,4 +1,4 @@
-package com.zerobase.minimart.order.seller.entity;
+package com.zerobase.minimart.order.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
