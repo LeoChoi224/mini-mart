@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 상세 정보</title>
+    <style>
+        body {
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 30px;
+        }
+        .image-box {
+            width: 400px;
+            margin-right: 40px;
+        }
+        .image-box img {
+            width: 100%;
+            border: 1px solid #ccc;
+        }
+        .info-box {
+            width: 500px;
+            text-align: left;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>상품 상세 정보</h1>
+
+<div th:replace="~{fragments/layout.html :: fragment-body-menu}"></div>
+
+<div class="container">
+    <!-- 이미지 영역 -->
+    <div class="image-box">
+        <img th:src="@{/images/sample-product.jpg}" alt="상품 이미지">
+    </div>
+
+    <!-- 정보 영역 -->
+    <div class="info-box">
+        <table>
+            <tr>
+                <th>상품명</th>
+                <td th:text="${product.productName}">상품명</td>
+            </tr>
+            <tr>
+                <th>가격</th>
+                <td th:text="${product.price}">가격</td>
+            </tr>
+            <tr>
+                <th>카테고리</th>
+                <td th:text="${product.category}">카테고리</td>
+            </tr>
+            <tr>
+                <th>재고 수량</th>
+                <td th:text="${product.stock}">재고 수량</td>
+            </tr>
+            <tr>
+                <th>판매 상태</th>
+                <td th:text="${product.status}">판매 상태</td>
+            </tr>
+            <tr>
+                <th>상세 설명</th>
+                <td th:text="${product.description}">상세 설명</td>
+            </tr>
+            <tr>
+                <th>등록일</th>
+                <td th:text="${#temporals.format(product.regDt, 'yyyy-MM-dd HH:mm')}">등록일</td>
+            </tr>
+            <tr>
+                <th>수정일</th>
+                <td th:text="${#temporals.format(product.updateDt, 'yyyy-MM-dd HH:mm')}">수정일</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
