@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>판매 상품 상세 / 수정</title>
+    <style>
+        body {
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 30px;
+        }
+        .image-box {
+            width: 400px;
+            margin-right: 40px;
+        }
+        .image-box img {
+            width: 100%;
+            border: 1px solid #ccc;
+        }
+        .form-box {
+            width: 500px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+        }
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%;
+            padding: 6px;
+        }
+        button {
+            margin-top: 16px;
+            padding: 8px 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>판매 상품 상세 / 수정</h1>
+
+<div th:replace="~{fragments/layout.html :: fragment-seller-body-menu}"></div>
+
+<div class="container">
+    <!-- 이미지 영역 -->
+    <div class="image-box">
+        <img th:src="@{/images/sample-product.jpg}" alt="상품 이미지">
+    </div>
+
+    <!-- 수정 폼 영역 -->
+    <div class="form-box">
+        <form method="post" th:action="@{/order/seller/product/update/{id}(id=${product.id})}">
+            <input type="hidden" name="id" th:value="${product.id}" />
+
+            <table>
+                <tr>
+                    <th>상품명</th>
+                    <td><input type="text" name="productName" th:value="${product.productName}" required/></td>
+                </tr>
+                <tr>
+                    <th>가격</th>
+                    <td><input type="number" name="price" th:value="${product.price}" required/></td>
+                </tr>
+                <tr>
+                    <th>카테고리</th>
+                    <td><input type="text" name="category" th:value="${product.category}" required/></td>
+                </tr>
+                <tr>
+                    <th>재고 수량</th>
+                    <td><input type="number" name="stock" th:value="${product.stock}" required/></td>
+                </tr>
+                <tr>
+                    <th>판매 상태</th>
+                    <td>
+                        <select name="status">
+                            <option value="판매중" th:selected="${product.status == '판매중'}">판매중</option>
+                            <option value="품절" th:selected="${product.status == '품절'}">품절</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>상세 설명</th>
+                    <td><textarea name="description" rows="5" required th:text="${product.description}"></textarea></td>
+                </tr>
+            </table>
+
+            <button type="submit">수정 완료</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

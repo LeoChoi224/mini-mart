@@ -17,4 +17,24 @@ public interface SellerService {
      * 나의 판매 내역 보기
      */
     List<Product> getProductsByUser(String userId);
+
+    /**
+     * 판매 상태 변경
+     */
+    void updateStatus(Long id, String status);
+
+    /**
+     * 상품 삭제
+     */
+    void deleteProduct(Long id);
+
+    /**
+     * 상품 상세 정보
+     */
+    Product getProduct(Long id);
+
+    /**
+     * 상품 수정
+     */
+    boolean update(ProductInput parameter, String userId);
 }

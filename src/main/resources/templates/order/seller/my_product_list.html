@@ -10,26 +10,29 @@
             border-collapse: collapse;
             text-align: center;
         }
-
         th, td {
             padding: 10px;
             border: 1px solid #ccc;
         }
-
         img {
             width: 80px;
         }
-
-        .action-buttons button {
+        .action-buttons form {
+            display: inline-block;
             margin: 0 4px;
         }
     </style>
 </head>
 <body>
 
+<h1 style="text-align:center;">판매 상품 목록</h1>
+
 <div th:replace="~{fragments/layout.html :: fragment-seller-body-menu}"></div>
 
-<h1 style="text-align:center;">판매 상품 목록</h1>
+<!-- 메시지 알림 안 뜸 수정해야함!! -->
+<!--<script th:if="${message}">-->
+<!--    alert([[${message}]]);-->
+<!--</script>-->
 
 <table>
     <thead>
@@ -45,21 +48,30 @@
     <tbody>
     <tr th:each="item : ${products}">
         <td>
-            <img th:if="${item.imageUrl}" th:src="@{${item.imageUrl}}" alt="이미지" width="80"/>
+            <img th:if="${item.imageUrl}" th:src="@{${item.imageUrl}}" alt="이미지"/>
             <span th:if="${item.imageUrl == null}">-</span>
         </td>
         <td th:text="${item.productName}">상품명</td>
         <td th:text="${item.price}">가격</td>
         <td th:text="${item.category}">카테고리</td>
         <td>
-            <select name="status" disabled>
-                <option th:selected="${item.status == '판매중'}">판매중</option>
-                <option th:selected="${item.status == '품절'}">품절</option>
-            </select>
+            <form th:action="@{/order/seller/product/status}" method="post">
+                <input type="hidden" name="id" th:value="${item.id}" />
+                <select name="status">
+                    <option value="판매중" th:selected="${item.status == '판매중'}">판매중</option>
+                    <option value="품절" th:selected="${item.status == '품절'}">품절</option>
+                </select>
+                <button type="submit">저장</button>
+            </form>
         </td>
         <td class="action-buttons">
-            <button type="button">수정</button>
-            <button type="button">삭제</button>
+            <form th:action="@{/order/seller/product/update/{id}(id=${item.id})}" method="get">
+                <button type="submit">수정</button>
+            </form>
+            <form th:action="@{/order/seller/product/delete/{id}(id=${item.id})}" method="get"
+                  onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                <button type="submit">삭제</button>
+            </form>
         </td>
     </tr>
     </tbody>
