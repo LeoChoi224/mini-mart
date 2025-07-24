@@ -1,5 +1,6 @@
 package com.zerobase.minimart.order.common.controller;
 
+import com.zerobase.minimart.config.UserPrincipal;
 import com.zerobase.minimart.order.common.model.ProductSearchInput;
 import com.zerobase.minimart.order.common.service.CommonService;
 import com.zerobase.minimart.order.entity.Product;
@@ -16,18 +17,14 @@ import java.util.List;
 public class CommonController {
 
     private final CommonService commonService;
-
-    @GetMapping("/search")
-    public String search(Model model) {
-        model.addAttribute("input", new ProductSearchInput());
-        return "order/common/search_main_page";
-    }
+    private UserPrincipal userPrincipal;
 
     @GetMapping("/list")
     public String list(@ModelAttribute ProductSearchInput input, Model model) {
         List<Product> products = commonService.searchProducts(input);
         model.addAttribute("products", products);
         model.addAttribute("input", input);
+
         return "order/common/product_list";
     }
 

@@ -5,12 +5,12 @@
 
 <div class="container">
     <h6>
-        <img src="/images/minimart-title.png" alt="Mini Mart" style="width: 700px; height: 200px;">
+        <img src="/images/minimart-title.png" alt="Mini Mart" style="width: 600px; height: 300px;">
     </h6>
 
 <div th:replace="~{fragments/layout.html :: fragment-seller-body-menu}"></div>
 
-    <form th:action="@{/order/common/list}" method="get" class="search-bar">
+    <form th:action="@{/order/seller/list}" method="get" class="search-bar">
         <select name="category" th:value="${input.category}">
             <option value="">전체 카테고리</option>
             <option value="전자제품" th:selected="${input.category == '전자제품'}">전자제품</option>

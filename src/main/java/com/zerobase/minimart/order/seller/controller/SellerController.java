@@ -1,10 +1,17 @@
 package com.zerobase.minimart.order.seller.controller;
 
 import com.zerobase.minimart.config.UserPrincipal;
+import com.zerobase.minimart.order.common.model.ProductSearchInput;
+import com.zerobase.minimart.order.common.service.CommonService;
+import com.zerobase.minimart.order.customer.service.CartService;
 import com.zerobase.minimart.order.entity.Product;
 import com.zerobase.minimart.order.seller.model.ProductInput;
 import com.zerobase.minimart.order.seller.service.SellerService;
+import com.zerobase.minimart.user.dto.UserDto;
 import com.zerobase.minimart.user.entity.User;
+import com.zerobase.minimart.user.model.ResetPasswordInput;
+import com.zerobase.minimart.user.model.UserInput;
+import com.zerobase.minimart.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -21,12 +28,58 @@ import java.util.List;
 public class SellerController {
 
     private final SellerService sellerService;
+    private final UserService userService;
+    private final CommonService commonService;
 
-    @GetMapping("/main")
-    public String sellerMainPage(Model model, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        User user = userPrincipal.getUser(); // ← 핵심 수정 포인트
-        model.addAttribute("userName", user.getUserName());
-        return "order/seller/main"; // main.html에 userName 출력 예시 포함 가능
+    @GetMapping("/info")
+    public String SellerInfo(Model model,
+                             @AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+        String userId = userPrincipal.getUsername(); // 또는 userPrincipal.getUser().getUserId()
+        UserDto user = userService.info(userId);
+
+        model.addAttribute("user", user);
+        return "order/seller/info";
+    }
+
+    @PostMapping("/update")
+    public String updateSellerInfo(@ModelAttribute UserInput userInput) {
+        userService.updateUserInfo(userInput);
+        return "redirect:/order/seller/info"; // 또는 성공 페이지
+    }
+
+    @PostMapping("/updateField")
+    public String updateUserField(@RequestParam String userId,
+                                  @RequestParam String field,
+                                  @RequestParam String value,
+                                  RedirectAttributes redirectAttributes) {
+
+        if ("password".equals(field)) {
+            userService.updatePassword(userId, value);
+            redirectAttributes.addAttribute("message", "비밀번호가 변경되었습니다.");
+        } else if ("phoneNumber".equals(field)) {
+            userService.updatePhoneNumber(userId, value);
+            redirectAttributes.addAttribute("message", "전화번호가 변경되었습니다.");
+        }
+
+        return "redirect:/order/seller/info";
+    }
+
+
+    @GetMapping("/list")
+    public String list(@ModelAttribute ProductSearchInput input, Model model) {
+        List<Product> products = commonService.searchProducts(input);
+        model.addAttribute("products", products);
+        model.addAttribute("input", input);
+
+        return "order/seller/product_list";
+    }
+
+    @GetMapping("/detail")
+    public String detail(@RequestParam Long id, Model model) {
+        Product product = commonService.getProductDetail(id);
+        model.addAttribute("product", product);
+        return "order/seller/product_detail";
     }
 
     @GetMapping("/product/add")

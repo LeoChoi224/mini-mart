@@ -54,24 +54,6 @@ public class UserController {
         return "user/email_auth";
     }
 
-    @GetMapping("/info")
-    public String memberInfo(Model model,
-                             @AuthenticationPrincipal UserPrincipal userPrincipal) {
-
-        String userId = userPrincipal.getUsername(); // 또는 userPrincipal.getUser().getUserId()
-        UserDto user = userService.info(userId);
-
-        model.addAttribute("user", user);
-        return "user/info";
-    }
-
-    @PostMapping("/user/update")
-    public String updateUser(@ModelAttribute UserInput userInput) {
-        userService.updateUserInfo(userInput);
-        return "redirect:/user/info"; // 또는 성공 페이지
-    }
-
-
     @GetMapping("/reset_password")
     public String resetPassword(Model model, @RequestParam("id") String uuid) {
 
@@ -99,30 +81,13 @@ public class UserController {
         return "user/reset_password_result";
     }
 
-    @PostMapping("/updateField")
-    public String updateUserField(@RequestParam String userId,
-                                  @RequestParam String field,
-                                  @RequestParam String value,
-                                  RedirectAttributes redirectAttributes) {
-
-        if ("password".equals(field)) {
-            userService.updatePassword(userId, value);
-            redirectAttributes.addAttribute("message", "비밀번호가 변경되었습니다.");
-        } else if ("phoneNumber".equals(field)) {
-            userService.updatePhoneNumber(userId, value);
-            redirectAttributes.addAttribute("message", "전화번호가 변경되었습니다.");
-        }
-
-        return "redirect:/user/info";
-    }
-
     @PostMapping("/applySeller")
     public String applySeller(@RequestParam String userId) {
         try {
             userService.applySeller(userId);
-            return "redirect:/user/info?message=" + UriUtils.encode("판매자 신청이 완료되었습니다.", StandardCharsets.UTF_8);
+            return "redirect:/order/customer/info?message=" + UriUtils.encode("판매자 신청이 완료되었습니다. \n 재 로그인 시 판매자 계정으로 이용 가능합니다.", StandardCharsets.UTF_8);
         } catch (CustomException e) {
-            return "redirect:/user/info?message=" + UriUtils.encode(e.getMessage(), StandardCharsets.UTF_8);
+            return "redirect:/order/customer/info?message=" + UriUtils.encode(e.getMessage(), StandardCharsets.UTF_8);
         }
     }
 

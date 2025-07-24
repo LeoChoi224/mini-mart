@@ -35,16 +35,17 @@
 </head>
 <body>
 
-<script th:if="${param.message}" th:inline="javascript">
-    alert([[${param.message}]]);
-</script>
-
-<h1>회원 정보</h1>
+<h6 style="margin-top: 0px; margin-bottom: 0px; text-align:center;">
+    <a th:href="@{/order/customer/home}">
+        <img src="/images/minimart-title.png" alt="Mini Mart" style="width: 600px; height: 300px;">
+    </a>
+</h6>
 
 <div th:replace="~{fragments/layout.html :: fragment-customer-body-menu}"></div>
 
 <table>
     <tbody>
+    <h3 style="text-align:center;">>회원 정보</h3>
     <!-- 아이디 (변경 불가) -->
     <tr>
         <th>아이디</th>
@@ -62,7 +63,7 @@
         <th>비밀번호</th>
         <td>********</td>
         <td>
-            <form method="post" th:action="@{/user/updateField}" class="inline-form">
+            <form method="post" th:action="@{/order/customer/updateField}" class="inline-form">
                 <input type="hidden" name="field" value="password"/>
                 <input type="hidden" name="userId" th:value="${user.userId}"/>
                 <input type="password" name="value" placeholder="새 비밀번호"/>
@@ -76,7 +77,7 @@
         <th>전화번호</th>
         <td th:text="${user.phoneNumber}">010-xxxx-xxxx</td>
         <td>
-            <form method="post" th:action="@{/user/updateField}" class="inline-form">
+            <form method="post" th:action="@{/order/customer/updateField}" class="inline-form">
                 <input type="hidden" name="field" value="phoneNumber"/>
                 <input type="hidden" name="userId" th:value="${user.userId}"/>
                 <input type="text" name="value" placeholder="010-0000-0000"/>

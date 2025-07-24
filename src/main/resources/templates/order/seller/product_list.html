@@ -7,16 +7,16 @@
 
     <!-- 로고 이미지 -->
     <h6 style="margin-top: 0px; margin-bottom: 0px;">
-        <a th:href="@{/order/common/home}">
+        <a th:href="@{/order/seller/home}">
             <img src="/images/minimart-title.png" alt="Mini Mart" style="width: 600px; height: 300px;">
         </a>
     </h6>
 
     <!-- 메뉴 -->
-    <div th:replace="~{fragments/layout.html :: fragment-body-menu}"></div>
+    <div th:replace="~{fragments/layout.html :: fragment-seller-body-menu}"></div>
 
     <!-- 검색 폼 -->
-    <form th:action="@{/order/common/list}" method="get" class="search-bar">
+    <form th:action="@{/order/seller/list}" method="get" class="search-bar">
         <select name="category" th:value="${input.category}">
             <option value="">전체 카테고리</option>
             <option value="전자제품" th:selected="${input.category == '전자제품'}">전자제품</option>
@@ -39,7 +39,7 @@
                 <h2 class="product-title" th:text="${product.productName}">상품명</h2>
                 <p class="product-price" th:text="'가격: ' + ${product.price} + '원'">가격</p>
                 <p class="product-description" th:text="${product.description}">설명</p>
-                <a th:href="@{'/order/common/detail?id=' + ${product.id}}" class="button">상세 보기</a>
+                <a th:href="@{'/order/seller/detail?id=' + ${product.id}}" class="button">상세 보기</a>
             </div>
 
         </div>
