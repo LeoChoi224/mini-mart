@@ -44,14 +44,21 @@
 </head>
 <body>
 
-<h1>판매 상품 상세 / 수정</h1>
+<h6 style="margin-top: 0px; margin-bottom: 0px; text-align:center;">
+    <a th:href="@{/order/seller/home}">
+        <img src="/images/minimart-title.png" alt="Mini Mart" style="width: 600px; height: 300px;">
+    </a>
+</h6>
 
-<div th:replace="~{fragments/layout.html :: fragment-sellr-body-menu}"></div>
+<div th:replace="~{fragments/layout.html :: fragment-seller-body-menu}"></div>
+
+<h3 style="text-align:center; margin-bottom: 0px;">판매 상품 상세 / 수정</h3>
 
 <div class="container">
     <!-- 이미지 영역 -->
     <div class="image-box">
-        <img th:src="@{/images/sample-product.jpg}" alt="상품 이미지">
+        <img th:if="${product.imageUrl}" th:src="@{'/images/' + ${product.imageUrl}}" alt="상품 이미지"/>
+        <span th:if="${product.imageUrl == null}">-</span>
     </div>
 
     <!-- 수정 폼 영역 -->

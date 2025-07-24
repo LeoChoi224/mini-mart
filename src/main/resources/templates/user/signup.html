@@ -43,13 +43,18 @@
 </head>
 <body>
 
-<h1 style="text-align: center;">회원 가입</h1>
+<h6 style="margin-top: 0px; margin-bottom: 0px; text-align:center;">
+    <a th:href="@{/}">
+        <img src="/images/minimart-title.png" alt="Mini Mart" style="width: 600px; height: 300px;">
+    </a>
+</h6>
 
 <div th:replace="~{fragments/layout.html :: fragment-body-menu}"></div>
 
 <div class="form-container">
     <form method="post" action="/user/signup">
         <table>
+            <h3 style="text-align:center;">회원 가입</h3>
             <tbody>
             <tr>
                 <th>아이디 (이메일)</th>

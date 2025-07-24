@@ -7,12 +7,17 @@
 </head>
 <body>
 
-<h1>상품 등록</h1>
+<h6 style="margin-top: 0px; margin-bottom: 0px; text-align:center;">
+    <a th:href="@{/order/seller/home}">
+        <img src="/images/minimart-title.png" alt="Mini Mart" style="width: 600px; height: 300px;">
+    </a>
+</h6>
 
-<div th:replace="~{fragments/layout.html :: fragment-sellr-body-menu}"></div>
+<div th:replace="~{fragments/layout.html :: fragment-seller-body-menu}"></div>
 
 <form method="post" th:action="@{/order/seller/product/add}">
     <table align="center" border="1" cellpadding="10">
+        <h3 style="text-align:center;">상품 추가</h3>
         <tr>
             <th>상품명</th>
             <td><input type="text" name="productName" placeholder="상품명을 입력하세요" required></td>

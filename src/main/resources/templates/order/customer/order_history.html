@@ -4,10 +4,18 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
+
+<h6 style="margin-top: 0px; margin-bottom: 0px; text-align:center;">
+    <a th:href="@{/order/customer/home}">
+        <img src="/images/minimart-title.png" alt="Mini Mart" style="width: 600px; height: 300px;">
+    </a>
+</h6>
+
 <div th:replace="fragments/layout.html :: fragment-customer-body-menu"></div>
 
 <div class="container">
-    <h1>📜 나의 구매 내역</h1>
+
+    <h3 style="text-align:center;">나의 구매 내역</h3>
 
     <div th:if="${orderList.isEmpty()}">
         <p>구매 내역이 없습니다.</p>

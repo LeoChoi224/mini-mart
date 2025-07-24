@@ -16,6 +16,12 @@ public class MainController {
     @RequestMapping("/")
     public String index() { return "index"; }
 
+    @GetMapping("/order/common/home")
+    public String search(Model model) {
+        model.addAttribute("input", new ProductSearchInput());
+        return "order/common/home";
+    }
+
     @GetMapping("/order/customer/home")
     public String customerHome(Model model){
         model.addAttribute("input", new ProductSearchInput());
