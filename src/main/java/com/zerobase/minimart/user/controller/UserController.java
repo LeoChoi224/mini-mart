@@ -35,7 +35,7 @@ public class UserController {
 
         if (result) {
             redirectAttributes.addFlashAttribute("signupSuccess", true);
-            return "redirect:/user/login";
+            return "redirect:/user/signup/complete?result=" + result;
         } else {
             redirectAttributes.addFlashAttribute("signupSuccess", false);
             return "redirect:/user/signup";
@@ -43,8 +43,9 @@ public class UserController {
     }
 
     @GetMapping("/signup/complete")
-    public String signupComplete() {
-        return "user/signup_complete";
+    public String signupComplete(@RequestParam boolean result, Model model) {
+        model.addAttribute("result", result);
+        return "user/signup_complete";  // templates/user/signup_complete.html 경로
     }
 
     @GetMapping("/email_auth")

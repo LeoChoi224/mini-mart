@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -47,7 +48,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 일반 허용 경로
                         .requestMatchers(
-                                "/", "/user/**", "/order/common/**",  "/css/**", "/js/**", "/images/**"
+                                "/", "/user/**", "/user/signup/**", "/order/common/**",  "/css/**", "/js/**", "/images/**"
                         ).permitAll()
 
                         // 판매자만 접근 허용
@@ -81,9 +82,11 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex
                         .accessDeniedHandler(customAccessDeniedHandler())
                 )
+                .addFilterBefore(new LoginSuccessFilter(), UsernamePasswordAuthenticationFilter.class)
                 // CSRF, CORS는 비활성화 (개발용)
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.disable());
+                .cors(cors -> cors.disable())
+        ;
 
         return http.build();
     }
