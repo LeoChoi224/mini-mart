@@ -29,4 +29,10 @@ public class CartItem {
 
     private int quantity; // 수량
     private LocalDateTime regDt; // 담은 시간
+
+    private String productName;
+    private int price;
+    private String imageUrl;
+
+
 }

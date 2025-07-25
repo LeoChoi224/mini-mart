@@ -1,62 +1,152 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/layout.html :: common-head('장바구니 목록')">
+<head>
+    <meta charset="UTF-8">
+    <title>장바구니 목록</title>
     <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <style>
+        table {
+            width: 90%;
+            margin: auto;
+            border-collapse: collapse;
+            text-align: center;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            vertical-align: middle;
+        }
+        img.product-img {
+            width: 80px;
+            height: auto;
+        }
+        .checkout-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            max-width: 90%;
+            margin: 30px auto;
+        }
+        .card-content {
+            display: flex;
+            align-items: center;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+        }
+        .card-content span {
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+    </style>
 </head>
 <body>
-<div th:replace="fragments/layout.html :: fragment-customer-body-menu"></div>
 
-<div class="container">
-    <h1>🛒 내 장바구니</h1>
+<h6 style="margin-top: 0px; margin-bottom: 0px; text-align:center;">
+    <a th:href="@{/order/customer/home}">
+        <img src="/images/minimart-title.png" alt="Mini Mart" style="width: 600px; height: 300px;">
+    </a>
+</h6>
 
-    <div th:if="${cartItems.isEmpty()}">
-        <p>장바구니가 비어 있습니다.</p>
-        <a href="/" class="button">상품 보러 가기</a>
-    </div>
+<div th:replace="~{fragments/layout.html :: fragment-customer-body-menu}"></div>
 
-    <div th:unless="${cartItems.isEmpty()}">
-        <table class="cart-table">
-            <thead>
-            <tr>
-                <th>상품명</th>
-                <th>가격</th>
-                <th>수량</th>
-                <th>총 가격</th>
-                <th>수정</th>
-                <th>삭제</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="item : ${cartItems}">
-                <td th:text="${item.productName}"></td>
-                <td th:text="${item.price} + '원'"></td>
-                <td>
-                    <form th:action="@{/order/customer/cart/update}" method="post">
-                        <input type="hidden" name="cartId" th:value="${item.id}" />
-                        <input type="number" name="quantity" th:value="${item.quantity}" min="1" />
-                        <button type="submit">변경</button>
-                    </form>
-                </td>
-                <td th:text="${item.price * item.quantity} + '원'"></td>
-                <td>
-                    <!-- 위의 form으로 수량 변경 -->
-                </td>
-                <td>
-                    <a th:href="@{/order/customer/cart/delete(id=${item.id})}" class="delete-btn">삭제</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+<div th:if="${cartItems.isEmpty()}" style="text-align:center; margin-top: 40px;">
+    <p>장바구니가 비어 있습니다.</p>
+    <a href="/" class="button">상품 보러 가기</a>
+</div>
 
-        <div class="checkout">
-            <p><strong>총 결제 금액:</strong> <span th:text="${totalPrice} + '원'"></span></p>
-            <form th:action="@{/order/customer/cart/checkout}" method="post">
-                <button type="submit" class="checkout-btn">구매하기</button>
-            </form>
-        </div>
+<div th:unless="${cartItems.isEmpty()}">
+    <h3 style="text-align:center;">🛒 내 장바구니</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>이미지</th>
+            <th>상품명</th>
+            <th>가격</th>
+            <th>수량</th>
+            <th>총 가격</th>
+            <th>변경</th>
+            <th>삭제</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${cartItems}">
+            <td>
+                <input type="checkbox"
+                       class="item-check"
+                       th:data-price="${item.price * item.quantity}" />
+                <img th:if="${item.imageUrl}" th:src="@{'/images/' + ${item.imageUrl}}" class="product-img"/>
+                <span th:if="${item.imageUrl == null}">-</span>
+                <input type="hidden" name="cartItemId" th:value="${item.id}" />
+            </td>
+            <td th:text="${item.productName}">상품명</td>
+            <td th:text="${#numbers.formatInteger(item.price, 3, 'COMMA')} + '원'">가격</td>
+            <td>
+                <form th:action="@{/order/customer/cart/update}" method="post">
+                    <input type="hidden" name="cartItemId" th:value="${item.id}" />
+                    <input type="number" name="quantity" th:value="${item.quantity}" min="1" style="width: 60px;" />
+            </td>
+            <td th:text="${#numbers.formatInteger(item.price * item.quantity, 3, 'COMMA')} + '원'">총 가격</td>
+            <td><button type="submit">변경</button></form></td>
+            <td>
+                <form th:action="@{/order/customer/cart/delete}" method="post"
+                      onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                    <input type="hidden" name="cartItemId" th:value="${item.id}" />
+                    <button type="submit">삭제</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="checkout-container">
+        <form th:action="@{/order/customer/cart/checkout}" method="post" id="checkout-form">
+            <div class="card-content">
+                <span id="totalPriceDisplay">총 결제 금액: 0원</span>
+                <input type="hidden" name="selectedCartItemIds" id="selectedCartItemIds" />
+                <button type="submit" class="menu-button" onclick="submitCheckoutForm()">구매하기</button>
+            </div>
+        </form>
     </div>
 </div>
 
-<div th:replace="fragments/layout.html :: common-footer"></div>
+<div th:replace="~{fragments/layout.html :: common-footer}"></div>
+
+<script>
+    function updateTotalPrice() {
+        const checkboxes = document.querySelectorAll('.item-check');
+        let total = 0;
+        checkboxes.forEach(cb => {
+            if (cb.checked) {
+                total += parseFloat(cb.dataset.price);
+            }
+        });
+        document.getElementById("totalPriceDisplay").innerText =
+            "총 결제 금액: " + total.toLocaleString("ko-KR") + "원";
+    }
+
+    function submitCheckoutForm() {
+        const checkboxes = document.querySelectorAll('.item-check');
+        const selectedIds = [];
+        checkboxes.forEach((cb) => {
+            if (cb.checked) {
+                const id = cb.closest('tr').querySelector('input[name="cartItemId"]').value;
+                selectedIds.push(id);
+            }
+        });
+        document.getElementById("selectedCartItemIds").value = selectedIds.join(",");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll('.item-check').forEach(cb => {
+            cb.addEventListener("change", updateTotalPrice);
+        });
+        updateTotalPrice(); // 페이지 로드시 초기화
+    });
+</script>
+
 </body>
 </html>

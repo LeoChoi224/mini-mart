@@ -1,5 +1,6 @@
 package com.zerobase.minimart.order.customer.repository;
 
+import com.zerobase.minimart.order.customer.dto.CartItemDto;
 import com.zerobase.minimart.order.customer.entity.CartItem;
 import com.zerobase.minimart.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

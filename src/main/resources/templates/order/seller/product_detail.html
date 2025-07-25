@@ -64,7 +64,7 @@
             </tr>
             <tr>
                 <th>가격</th>
-                <td th:text="${product.price}">가격</td>
+                <td class="product-price" th:attr="data-price=${product.price}"></td>
             </tr>
             <tr>
                 <th>카테고리</th>
@@ -95,5 +95,8 @@
 </div>
 
 <div th:replace="fragments/layout.html :: common-footer"></div>
+
+<script src="/js/comma-util.js"></script>
+
 </body>
 </html>
