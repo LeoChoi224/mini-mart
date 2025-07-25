@@ -42,6 +42,11 @@ public class UserController {
         }
     }
 
+    @GetMapping("/signup/complete")
+    public String signupComplete() {
+        return "user/signup_complete";
+    }
+
     @GetMapping("/email_auth")
     public String emailAuth(Model model, HttpServletRequest request) {
 

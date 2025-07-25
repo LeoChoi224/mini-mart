@@ -64,7 +64,7 @@
             </tr>
             <tr>
                 <th>가격</th>
-                <td th:text="${product.price}">가격</td>
+                <td class="product-price" th:attr="data-price=${product.price}"></td>
             </tr>
             <tr>
                 <th>카테고리</th>
@@ -91,9 +91,20 @@
                 <td th:text="${#temporals.format(product.updateDt, 'yyyy-MM-dd HH:mm')}">수정일</td>
             </tr>
         </table>
+
+        <!-- 장바구니 담기 버튼 -->
+        <form th:action="@{/order/customer/cart/add}" method="post">
+            <input type="hidden" name="productId" th:value="${product.id}" />
+            <input type="number" name="quantity" min="1" value="1" required />
+            <button type="submit">장바구니 담기</button>
+        </form>
+
     </div>
 </div>
 
 <div th:replace="fragments/layout.html :: common-footer"></div>
+
+<script src="/js/comma-util.js"></script>
+
 </body>
 </html>

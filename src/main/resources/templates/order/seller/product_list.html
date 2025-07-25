@@ -20,8 +20,12 @@
         <select name="category" th:value="${input.category}">
             <option value="">전체 카테고리</option>
             <option value="전자제품" th:selected="${input.category == '전자제품'}">전자제품</option>
+            <option value="가전디지털스포츠/레저" th:selected="${input.category == '가전디지털스포츠/레저'}">가전디지털스포츠/레저</option>
+            <option value="생활용품" th:selected="${input.category == '생활용품'}">생활용품</option>
+            <option value="뷰티" th:selected="${input.category == '뷰티'}">뷰티</option>
+            <option value="패션의류/잡화" th:selected="${input.category == '패션의류/잡화'}">패션의류/잡화</option>
             <option value="식품" th:selected="${input.category == '식품'}">식품</option>
-            <option value="의류" th:selected="${input.category == '의류'}">의류</option>
+            <option value="기타" th:selected="${input.category == '기타'}">기타</option>
         </select>
         <input type="text" name="keyword" placeholder="검색어를 입력하세요" th:value="${input.keyword}" />
         <button type="submit">검색</button>
@@ -37,7 +41,7 @@
             <!-- 오른쪽 내용 -->
             <div class="card-content">
                 <h2 class="product-title" th:text="${product.productName}">상품명</h2>
-                <p class="product-price" th:text="'가격: ' + ${product.price} + '원'">가격</p>
+                <p class="product-price" th:attr="data-price=${product.price}">가격</p>
                 <p class="product-description" th:text="${product.description}">설명</p>
                 <a th:href="@{'/order/seller/detail?id=' + ${product.id}}" class="button">상세 보기</a>
             </div>
@@ -47,5 +51,8 @@
 </div>
 
 <div th:replace="fragments/layout.html :: common-footer"></div>
+
+<script src="/js/comma-util.js"></script>
+
 </body>
 </html>

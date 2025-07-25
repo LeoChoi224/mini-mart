@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>구매 내역</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+<body>
+
+<h6 style="text-align:center;">
+    <a th:href="@{/order/customer/home}">
+        <img src="/images/minimart-title.png" alt="Mini Mart" style="width: 600px; height: 300px;">
+    </a>
+</h6>
+
+<div th:replace="~{fragments/layout.html :: fragment-customer-body-menu}"></div>
+
+<h3 style="text-align:center;">📦 나의 구매 내역</h3>
+
+<table style="width: 90%; margin: auto; border-collapse: collapse; text-align: center;">
+    <thead>
+    <tr>
+        <th>상품 이미지</th>
+        <th>상품명</th>
+        <th>수량</th>
+        <th>가격</th>
+        <th>구매일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${historyList}">
+        <td>
+            <img th:src="@{'/images/' + ${item.product.imageUrl}}" alt="상품 이미지" style="width: 80px;" />
+        </td>
+        <td th:text="${item.product.productName}">상품명</td>
+        <td th:text="${item.quantity}">수량</td>
+        <td class="product-price" th:attr="data-price=${item.price}"></td>
+        <td th:text="${#temporals.format(item.purchaseDt, 'yyyy-MM-dd HH:mm')}">구매일</td>
+    </tr>
+    </tbody>
+</table>
+
+<div th:replace="~{fragments/layout.html :: common-footer}"></div>
+
+<script src="/js/comma-util.js"></script>
+
+</body>
+</html>

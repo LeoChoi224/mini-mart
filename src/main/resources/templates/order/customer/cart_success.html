@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/layout.html :: fragment-head('장바구니 담기 완료')">
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
-</head>
+<head th:replace="~{fragments/layout.html :: common-head('장바구니 담기 완료')}"></head>
 <body>
 
 <div th:replace="fragments/layout.html :: fragment-customer-body-menu"></div>
+
 <div class="container text-center">
     <h1>✅ 장바구니에 담겼습니다!</h1>
 
-    <p th:if="${productName != null}">
-        <strong th:text="${productName}"></strong> 상품이 장바구니에 추가되었습니다.
+    <!-- ✅ 상품명 출력 -->
+    <p th:if="${product != null}">
+        <strong th:text="${product.productName}">상품명</strong> 상품이 장바구니에 추가되었습니다.
     </p>
 
+    <!-- ✅ 버튼 그룹 (상세보기는 없음) -->
     <div class="button-group">
         <a href="/" class="button">홈으로 가기</a>
         <a href="/order/customer/cart" class="button">장바구니로 이동</a>
-        <a href="/order/common/search" class="button">상품 계속 보기</a>
+
+        <!-- ✅ 검색 조건 유지한 상품 계속 보기 -->
+        <a th:href="@{'/order/customer/list'(category=${session.lastCategory}, keyword=${session.lastKeyword})}" class="button">상품 계속 보기</a>
     </div>
 </div>
 
