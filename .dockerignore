@@ -1,0 +1,38 @@
+# Git / IDE / OS 관련
+.git
+.gitignore
+.idea
+*.iml
+.vscode
+.DS_Store
+
+# Build outputs
+build/
+out/
+target/
+.gradle/
+!gradlew
+!gradlew.bat
+!gradle/wrapper/gradle-wrapper.jar
+
+# Node or frontend bundles (혹시 프론트 포함 시)
+node_modules/
+dist/
+*.log
+
+# 환경설정 / 비밀정보
+.env
+*.yml
+*.yaml
+application*.yml
+application*.yaml
+secrets/
+*.pem
+*.key
+*.crt
+
+# Temporary files
+**/__pycache__/
+*.tmp
+*.bak
+*.swp
