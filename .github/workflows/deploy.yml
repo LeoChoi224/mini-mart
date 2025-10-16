@@ -2,17 +2,19 @@ name: CI/CD to EC2 (Docker Hub + Docker Compose)
 
 on:
   push:
-    branches: [ main ]         # 필요시 'develop' 등으로 바꾸세요
-  workflow_dispatch:           # 수동 실행 버튼
+    branches: [ main ]          # 필요시 develop 등으로 변경
+  workflow_dispatch:            # 수동 실행 버튼
 
 env:
-  IMAGE: leochoi224/mini-mart  # 본인 Docker Hub 리포지토리
-  APP_PORT: "8080"             # 앱 포트 (compose와 일치)
+  IMAGE: leochoi224/mini-mart   # 본인 Docker Hub 리포지토리
+  APP_PORT: "8080"
   HEALTH_URL: "http://localhost:8080/actuator/health"
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    outputs:
+      TAG: ${{ steps.out.outputs.TAG }}   # 다음 job에서 사용
 
     steps:
       - name: Checkout
@@ -29,6 +31,19 @@ jobs:
             echo "EXTRA_TAG=" >> $GITHUB_OUTPUT
           fi
 
+      # ⬇️ JAR 만들기 (추가됨)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Build with Gradle (make jar)
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean bootJar
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -41,13 +56,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 캐시를 이용한 빠른 빌드
+      # 캐시를 이용한 빠른 빌드 + 멀티 태그 푸시
       - name: Build and Push (multi-arch)
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./docker/Dockerfile        # Dockerfile 경로(현재 구조 기준)
-          platforms: linux/amd64           # EC2가 x86이면 amd64만으로 충분
+          file: ./docker/Dockerfile         # 네가 쓰는 Dockerfile 경로
+          platforms: linux/amd64            # EC2가 x86이면 amd64만으로 충분
           push: true
           tags: |
             ${{ env.IMAGE }}:${{ steps.prep.outputs.SHORT_SHA }}
@@ -79,7 +94,6 @@ jobs:
 
             echo "==> Ensure docker-compose is available"
             if ! command -v docker-compose >/dev/null 2>&1; then
-              # Amazon Linux 계열: pip로 설치 (이미 설치돼 있으면 skip)
               sudo dnf -y install python3-pip || true
               sudo pip3 install docker-compose || true
             fi
@@ -91,8 +105,7 @@ jobs:
             echo "==> Login Docker Hub (for pull)"
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-            # ---- 구성 파일(한 번만 변경하면 그 다음부터는 생략 가능) ----
-            # compose가 '변수 기반 이미지 태그'를 쓰도록 보정
+            # ---- compose가 변수 기반 이미지 태그를 쓰도록 보정(최초 1회 생성) ----
             if ! grep -q 'image: ${IMAGE' docker-compose.yml 2>/dev/null; then
               cat > docker-compose.yml <<'YAML'
             version: "3.8"
@@ -153,13 +166,8 @@ jobs:
               PREV_TAG=""
             fi
 
-            NEW_TAG="${{ needs.build-and-push.outputs.TAG || steps.out.outputs.TAG }}"
-            if [ -z "$NEW_TAG" ]; then
-              NEW_TAG="${{ needs.build-and-push.outputs.TAG }}"
-            fi
-
+            NEW_TAG="${{ needs.build-and-push.outputs.TAG }}"
             # 서버에서 사용할 환경변수 저장
-            # (MAIL_PASSWORD는 GitHub Secret에서 가져와 주입)
             awk 'BEGIN{OFS=FS="="} !/^APP_TAG=|^IMAGE=|^MAIL_PASSWORD=/' .env > .env.tmp || true
             mv .env.tmp .env || true
             echo "IMAGE=${{ env.IMAGE }}" >> .env
@@ -169,12 +177,9 @@ jobs:
             echo "==> Pull & recreate"
             set -o pipefail
             docker-compose --env-file .env pull app | sed -e 's/DOCKER_AUTH_CONFIG.*/(auth hidden)/' || true
-
-            # 컨테이너 재기동(무중단에 가깝게): 새 컨테이너가 healthy되면 구버전 내려감
             docker-compose --env-file .env up -d --remove-orphans
 
             echo "==> Health check"
-            # 30초(5 x 6)까지 재시도
             for i in 1 2 3 4 5 6; do
               if curl -fsS ${{ env.HEALTH_URL }} | grep -qi '"status":"UP"'; then
                 echo "Health OK"
@@ -191,7 +196,6 @@ jobs:
               mv .env.tmp .env || true
               echo "APP_TAG=${PREV_TAG}" >> .env
               docker-compose --env-file .env up -d --remove-orphans
-              # 롤백 후 한 번 더 확인(옵션)
               sleep 5
               curl -fsS ${{ env.HEALTH_URL }} || true
               echo "Rolled back to ${PREV_TAG}"

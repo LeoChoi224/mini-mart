@@ -14,6 +14,7 @@ target/
 !gradlew
 !gradlew.bat
 !gradle/wrapper/gradle-wrapper.jar
+!build/libs/mini-mart.jar
 
 # Node or frontend bundles (혹시 프론트 포함 시)
 node_modules/
