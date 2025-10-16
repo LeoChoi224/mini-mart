@@ -43,9 +43,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    // Git Actions 관련
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-
     // Thymeleaf 템플릿 (HTML로 화면 그리기)
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
