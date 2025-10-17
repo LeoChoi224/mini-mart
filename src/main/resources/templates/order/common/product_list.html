@@ -1,58 +1,110 @@
-<!-- product_list.html -->
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/layout.html :: common-head('상품 목록')"></head>
 <body>
-<div class="container">
-
-    <!-- 로고 이미지 -->
-    <h6 style="margin-top: 0px; margin-bottom: 0px;">
-        <a th:href="@{/order/common/home}">
-            <img src="/images/minimart-title.png" alt="Mini Mart" style="width: 600px; height: 300px;">
-        </a>
-    </h6>
-
-    <!-- 메뉴 -->
     <div th:replace="~{fragments/layout.html :: fragment-body-menu}"></div>
 
-    <!-- 검색 폼 -->
-    <form th:action="@{/order/common/list}" method="get" class="search-bar">
-        <select name="category" th:value="${input.category}">
-            <option value="">전체 카테고리</option>
-            <option value="전자제품" th:selected="${input.category == '전자제품'}">전자제품</option>
-            <option value="가전디지털스포츠/레저" th:selected="${input.category == '가전디지털스포츠/레저'}">가전디지털스포츠/레저</option>
-            <option value="생활용품" th:selected="${input.category == '생활용품'}">생활용품</option>
-            <option value="뷰티" th:selected="${input.category == '뷰티'}">뷰티</option>
-            <option value="패션의류/잡화" th:selected="${input.category == '패션의류/잡화'}">패션의류/잡화</option>
-            <option value="식품" th:selected="${input.category == '식품'}">식품</option>
-            <option value="기타" th:selected="${input.category == '기타'}">기타</option>
-        </select>
-        <input type="text" name="keyword" placeholder="검색어를 입력하세요" th:value="${input.keyword}" />
-        <button type="submit">검색</button>
-    </form>
+    <div class="search-section">
+        <form th:action="@{/order/common/list}" method="get" class="search-bar">
+            <select name="category" th:value="${input.category}">
+                <option value="">전체 카테고리</option>
+                <option value="전자제품" th:selected="${input.category == '전자제품'}">📱 전자제품</option>
+                <option value="가전디지털스포츠/레저" th:selected="${input.category == '가전디지털스포츠/레저'}">🏠 가전/디지털/스포츠</option>
+                <option value="생활용품" th:selected="${input.category == '생활용품'}">🧽 생활용품</option>
+                <option value="뷰티" th:selected="${input.category == '뷰티'}">💄 뷰티</option>
+                <option value="패션의류/잡화" th:selected="${input.category == '패션의류/잡화'}">👕 패션/의류/잡화</option>
+                <option value="식품" th:selected="${input.category == '식품'}">🍎 식품</option>
+                <option value="기타" th:selected="${input.category == '기타'}">📦 기타</option>
+            </select>
+            <input type="text" name="keyword" placeholder="검색어를 입력하세요" th:value="${input.keyword}" />
+            <button type="submit">🔍 검색</button>
+        </form>
 
-    <!-- 상품 목록 -->
-    <div class="product-list" style="margin-top: 30px;">
-        <div class="card" th:each="product : ${products}">
-
-            <!-- 왼쪽 이미지 -->
-            <img th:src="@{'/images/' + ${product.imageUrl}}" alt="상품 이미지">
-
-            <!-- 오른쪽 내용 -->
-            <div class="card-content">
-                <h2 class="product-title" th:text="${product.productName}">상품명</h2>
-                <p class="product-price" th:attr="data-price=${product.price}">가격</p>
-                <p class="product-description" th:text="${product.description}">설명</p>
-                <a th:href="@{'/order/common/detail?id=' + ${product.id}}" class="button">상세 보기</a>
-            </div>
-
+        <div class="tags">
+            <a href="/order/common/list?filter=best" class="tag featured">⭐ 베스트 상품</a>
+            <a href="/order/common/list?filter=new" class="tag new">🆕 신상품</a>
+            <a href="/order/common/list?filter=sale" class="tag sale">💰 할인 상품</a>
+            <a href="/order/common/list?filter=featured" class="tag">❤️ 추천 상품</a>
+            <a href="/order/common/list?filter=popular" class="tag">🎉 인기 상품</a>
         </div>
     </div>
-</div>
 
-<div th:replace="fragments/layout.html :: common-footer"></div>
+    <!-- 상품 목록 -->
+    <div class="product-grid">
+        <div class="product-card fade-in" th:each="product : ${products}">
+            <img th:src="@{'/images/' + ${product.imageUrl}}" alt="상품 이미지" class="product-image">
+            
+            <div class="product-content">
+                <div class="product-badges">
+                    <span class="badge badge-new" th:if="${product.isNew}">신상품</span>
+                    <span class="badge badge-sale" th:if="${product.discountRate > 0}">할인</span>
+                    <span class="badge badge-best" th:if="${product.isBest}">베스트</span>
+                </div>
+                
+                <h3 class="product-title" th:text="${product.productName}">상품명</h3>
+                
+                <div class="product-price" th:if="${product.discountRate > 0}">
+                    <span class="product-price original" th:text="'₩' + ${#numbers.formatInteger(product.originalPrice, 3, 'COMMA')}">원가</span>
+                    <span th:text="'₩' + ${#numbers.formatInteger(product.price, 3, 'COMMA')}">할인가</span>
+                </div>
+                <div class="product-price" th:unless="${product.discountRate > 0}" th:text="'₩' + ${#numbers.formatInteger(product.price, 3, 'COMMA')}">가격</div>
+                
+                <p class="product-description" th:text="${product.description}">설명</p>
+                
+                <div class="product-meta">
+                    <span th:text="'재고: ' + ${product.stockQuantity}">재고</span>
+                    <span th:text="'카테고리: ' + ${product.category}">카테고리</span>
+                </div>
+                
+                <div class="product-actions">
+                    <a th:href="@{'/order/common/detail?id=' + ${product.id}}" class="btn btn-primary btn-sm">상세보기</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<script src="/js/comma-util.js"></script>
+    <!-- 검색 결과가 없을 때 -->
+    <div th:if="${#lists.isEmpty(products)}" class="text-center" style="padding: 3rem;">
+        <h3 style="color: var(--medium-gray); margin-bottom: 1rem;">😔 검색 결과가 없습니다</h3>
+        <p style="color: var(--medium-gray);">다른 검색어로 시도해보세요</p>
+    </div>
 
+    <!-- 페이징 -->
+    <div th:if="${pageInfo != null and pageInfo.totalPages > 1}" class="pagination">
+        <!-- 첫 페이지로 -->
+        <a th:if="${!pageInfo.isFirst}" 
+           th:href="@{/order/common/list(page=0, category=${input.category}, keyword=${input.keyword})}">처음</a>
+        
+        <!-- 이전 페이지 -->
+        <a th:if="${pageInfo.hasPrevious}" 
+           th:href="@{/order/common/list(page=${pageInfo.page - 1}, category=${input.category}, keyword=${input.keyword})}">이전</a>
+        
+        <!-- 페이지 번호들 -->
+        <span th:each="pageNum : ${#numbers.sequence(T(java.lang.Math).max(0, pageInfo.page - 2), T(java.lang.Math).min(pageInfo.totalPages - 1, pageInfo.page + 2))}"
+              th:class="${pageNum == pageInfo.page ? 'current' : ''}">
+            <a th:if="${pageNum != pageInfo.page}"
+               th:href="@{/order/common/list(page=${pageNum}, category=${input.category}, keyword=${input.keyword})}"
+               th:text="${pageNum + 1}">1</a>
+            <span th:if="${pageNum == pageInfo.page}" th:text="${pageNum + 1}">1</span>
+        </span>
+        
+        <!-- 다음 페이지 -->
+        <a th:if="${pageInfo.hasNext}" 
+           th:href="@{/order/common/list(page=${pageInfo.page + 1}, category=${input.category}, keyword=${input.keyword})}">다음</a>
+        
+        <!-- 마지막 페이지로 -->
+        <a th:if="${!pageInfo.isLast}" 
+           th:href="@{/order/common/list(page=${pageInfo.totalPages - 1}, category=${input.category}, keyword=${input.keyword})}">마지막</a>
+    </div>
+
+    <!-- 페이지 정보 -->
+    <div th:if="${pageInfo != null}" class="text-center" style="margin: 2rem 0; color: var(--medium-gray);">
+        <p th:text="'총 ' + ${pageInfo.totalElements} + '개 상품 중 ' + (${pageInfo.page} * ${pageInfo.size} + 1) + '-' + T(java.lang.Math).min(${pageInfo.page} * ${pageInfo.size} + ${pageInfo.size}, ${pageInfo.totalElements}) + '번째 상품'">
+            페이지 정보
+        </p>
+    </div>
+
+    <div th:replace="fragments/layout.html :: common-footer"></div>
+    <script src="/js/comma-util.js"></script>
 </body>
 </html>

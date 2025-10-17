@@ -4,60 +4,65 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="common-head(title)">
     <meta charset="UTF-8">
-    <title th:text="${title}">minimart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Mini Mart</title>
     <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="main-container">
+        <!-- 비 로그인 이용자 메뉴 -->
+        <div th:fragment="fragment-body-menu">
+            <div class="header">
+                <h1>🛒 Mini Mart</h1>
+                <p>당신의 쇼핑 파트너</p>
+            </div>
+            <div class="nav-menu">
+                <a href="/" class="btn btn-primary">로그인</a>
+                <a href="/user/signup" class="btn btn-secondary">회원가입</a>
+                <a href="/order/common/home" class="btn btn-outline">상품 검색</a>
+            </div>
+        </div>
 
-<!-- 비 로그인 이용자 메뉴 -->
-<div th:fragment="fragment-body-menu" style="text-align: center;">
-    <div>
-        <a href="/" class="menu-button"> 로그인 </a>
-        |
-        <a href="/user/signup" class="menu-button"> 회원 가입 </a>
-        |
-        <a href="/order/common/home" class="menu-button"> 상품 검색 </a>
+        <!-- 판매자 메뉴 -->
+        <div th:fragment="fragment-seller-body-menu">
+            <div class="header">
+                <h1>🏪 판매자 대시보드</h1>
+                <p>상품 관리와 판매 현황을 확인하세요</p>
+            </div>
+            <div class="nav-menu">
+                <a href="/order/seller/info" class="btn btn-outline">마이페이지</a>
+                <a href="/order/seller/product/my_list" class="btn btn-outline">나의 판매내역</a>
+                <a href="/order/seller/product/add" class="btn btn-primary">상품 등록</a>
+                <a href="/order/seller/home" class="btn btn-secondary">홈으로</a>
+                <a href="/user/logout" class="btn btn-outline">로그아웃</a>
+            </div>
+        </div>
+
+        <!-- 구매자 메뉴 -->
+        <div th:fragment="fragment-customer-body-menu">
+            <div class="header">
+                <h1>🛍️ 쇼핑몰</h1>
+                <p>원하는 상품을 찾아보세요</p>
+            </div>
+            <div class="nav-menu">
+                <a href="/order/customer/info" class="btn btn-outline">마이페이지</a>
+                <a href="/order/customer/purchase-history" class="btn btn-outline">구매내역</a>
+                <a href="/order/customer/cart" class="btn btn-primary">장바구니</a>
+                <a href="/order/customer/home" class="btn btn-secondary">홈으로</a>
+                <a href="/user/logout" class="btn btn-outline">로그아웃</a>
+            </div>
+        </div>
+
+        <!-- 공통 Footer fragment -->
+        <div th:fragment="common-footer">
+            <div class="footer">
+                <p>&copy; 2025 Mini Mart. All rights reserved.</p>
+                <p style="margin-top: 0.5rem; opacity: 0.8;">당신의 쇼핑 파트너</p>
+            </div>
+        </div>
     </div>
-    <hr/>
-</div>
-
-<!-- 판매자 메뉴 -->
-<div th:fragment="fragment-seller-body-menu" style="text-align: center;">
-    <a href="/order/seller/info" class="menu-button"> 마이 페이지 </a>
-    |
-    <a href="/order/seller/product/my_list" class="menu-button"> 나의 판매 내역 </a>
-    |
-    <a href="/order/seller/product/add" class="menu-button"> 상품 등록 </a>
-    |
-    <a href="/user/logout" class="menu-button"> 로그아웃 </a>
-    |
-    <a href="/order/seller/home" class="menu-button"> 홈으로 </a>
-    <br/>
-    <hr/>
-</div>
-
-<!-- 구매자 메뉴 -->
-<div th:fragment="fragment-customer-body-menu" style="text-align: center;">
-    <a href="/order/customer/info" class="menu-button"> 마이 페이지 </a>
-    |
-    <a href="/order/customer/purchase-history" class="menu-button"> 나의 구매 내역 </a>
-    |
-    <a href="/order/customer/cart" class="menu-button"> 장바구니 </a>
-    |
-    <a href="/user/logout" class="menu-button"> 로그아웃 </a>
-    |
-    <a href="/order/customer/home" class="menu-button"> 홈으로 </a>
-    <br/>
-    <hr/>
-</div>
-
-<!-- ✅ 공통 Footer fragment -->
-<div th:fragment="common-footer">
-    <hr/>
-    <div class="container" style="text-align: center;">
-        <p style="font-size: 0.9rem; color: #999;">&copy; 2025 Mini Mart. All rights reserved.</p>
-    </div>
-</div>
-
 </body>
 </html>
