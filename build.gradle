@@ -7,6 +7,10 @@ plugins {
 group = 'com.zerobase'
 version = '0.0.1-SNAPSHOT'
 
+bootJar {
+    archiveFileName = 'mini-mart.jar'
+}
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
@@ -34,6 +38,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'com.mysql:mysql-connector-j'
 //    runtimeOnly 'mysql:mysql-connector-java:8.0.33'
+
+    // Git Actions 관련
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     // 웹 MVC 기본 구조
     implementation 'org.springframework.boot:spring-boot-starter-web'
