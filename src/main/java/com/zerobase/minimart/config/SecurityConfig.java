@@ -48,7 +48,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // 일반 허용 경로
                         .requestMatchers(
-                                "/", "/user/**", "/user/signup/**", "/order/common/**",  "/css/**", "/js/**", "/images/**"
+                                "/", "/user/**", "/user/signup/**", "/order/common/**",  "/css/**", "/js/**", "/images/**", "/hello"
                         ).permitAll()
 
                         // 판매자만 접근 허용
