@@ -2,38 +2,33 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/layout.html :: common-head('상품 검색')"></head>
 <body>
+    <div th:replace="~{fragments/layout.html :: fragment-body-menu}"></div>
 
-<div class="container">
-    <h6 style="margin-top: 0px; margin-bottom: 0px;">
-        <img src="/images/minimart-title.png" alt="Mini Mart" style="width: 600px; height: 300px;">
-    </h6>
+    <div class="search-section">
+        <form th:action="@{/order/common/list}" method="get" class="search-bar">
+            <select name="category" th:value="${input.category}">
+                <option value="">전체 카테고리</option>
+                <option value="전자제품" th:selected="${input.category == '전자제품'}">📱 전자제품</option>
+                <option value="가전디지털스포츠/레저" th:selected="${input.category == '가전디지털스포츠/레저'}">🏠 가전/디지털/스포츠</option>
+                <option value="생활용품" th:selected="${input.category == '생활용품'}">🧽 생활용품</option>
+                <option value="뷰티" th:selected="${input.category == '뷰티'}">💄 뷰티</option>
+                <option value="패션의류/잡화" th:selected="${input.category == '패션의류/잡화'}">👕 패션/의류/잡화</option>
+                <option value="식품" th:selected="${input.category == '식품'}">🍎 식품</option>
+                <option value="기타" th:selected="${input.category == '기타'}">📦 기타</option>
+            </select>
+            <input type="text" name="keyword" placeholder="원하시는 상품을 검색해보세요" th:value="${input.keyword}" />
+            <button type="submit">🔍 검색</button>
+        </form>
 
-<div th:replace="~{fragments/layout.html :: fragment-body-menu}"></div>
-
-    <form th:action="@{/order/common/list}" method="get" class="search-bar">
-        <select name="category" th:value="${input.category}">
-            <option value="">전체 카테고리</option>
-            <option value="전자제품" th:selected="${input.category == '전자제품'}">전자제품</option>
-            <option value="가전디지털스포츠/레저" th:selected="${input.category == '가전디지털스포츠/레저'}">가전디지털스포츠/레저</option>
-            <option value="생활용품" th:selected="${input.category == '생활용품'}">생활용품</option>
-            <option value="뷰티" th:selected="${input.category == '뷰티'}">뷰티</option>
-            <option value="패션의류/잡화" th:selected="${input.category == '패션의류/잡화'}">패션의류/잡화</option>
-            <option value="식품" th:selected="${input.category == '식품'}">식품</option>
-            <option value="기타" th:selected="${input.category == '기타'}">기타</option>
-        </select>
-        <input type="text" name="keyword" placeholder="원하시는 상품을 검색해보세요" th:value="${input.keyword}" />
-        <button type="submit">검색</button>
-    </form>
-
-    <div class="tags">
-        <div class="tag">베스트 상품</div>
-        <div class="tag">신상품</div>
-        <div class="tag">할인 상품</div>
-        <div class="tag">추천 상품</div>
-        <div class="tag">행사 상품</div>
+        <div class="tags">
+            <a href="/order/common/list?filter=best" class="tag featured">⭐ 베스트 상품</a>
+            <a href="/order/common/list?filter=new" class="tag new">🆕 신상품</a>
+            <a href="/order/common/list?filter=sale" class="tag sale">💰 할인 상품</a>
+            <a href="/order/common/list?filter=featured" class="tag">❤️ 추천 상품</a>
+            <a href="/order/common/list?filter=popular" class="tag">🎉 인기 상품</a>
+        </div>
     </div>
-</div>
 
-<div th:replace="fragments/layout.html :: common-footer"></div>
+    <div th:replace="fragments/layout.html :: common-footer"></div>
 </body>
 </html>

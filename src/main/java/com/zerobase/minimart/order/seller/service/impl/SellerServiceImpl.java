@@ -21,15 +21,32 @@ public class SellerServiceImpl implements SellerService {
 
     @Override
     public void add(@ModelAttribute ProductInput parameter, String userId) {
+        // 할인율이 있으면 할인된 가격 계산
+        int finalPrice = parameter.getPrice();
+        if (parameter.getDiscountRate() > 0) {
+            finalPrice = parameter.getOriginalPrice() * (100 - parameter.getDiscountRate()) / 100;
+        }
+        
         Product product = Product.builder()
                 .userId(userId)
                 .productName(parameter.getProductName())
-                .price(parameter.getPrice())
+                .price(finalPrice)
+                .originalPrice(parameter.getOriginalPrice() > 0 ? parameter.getOriginalPrice() : parameter.getPrice())
+                .discountRate(parameter.getDiscountRate())
                 .description(parameter.getDescription())
                 .imageUrl(parameter.getImageUrl())
+                .mainImageUrl(parameter.getMainImageUrl() != null ? parameter.getMainImageUrl() : parameter.getImageUrl())
                 .category(parameter.getCategory())
                 .stock(parameter.getStock())
                 .status(parameter.getStatus())
+                .shippingFee(parameter.getShippingFee())
+                .shippingDays(parameter.getShippingDays())
+                .isNew(parameter.isNew())
+                .isBest(parameter.isBest())
+                .isFeatured(parameter.isFeatured())
+                .productOptions(parameter.getProductOptions())
+                .viewCount(0)
+                .purchaseCount(0)
                 .regDt(LocalDateTime.now())
                 .updateDt(LocalDateTime.now())
                 .build();
@@ -75,12 +92,28 @@ public class SellerServiceImpl implements SellerService {
             return false;
         }
 
+        // 할인율이 있으면 할인된 가격 계산
+        int finalPrice = parameter.getPrice();
+        if (parameter.getDiscountRate() > 0) {
+            finalPrice = parameter.getOriginalPrice() * (100 - parameter.getDiscountRate()) / 100;
+        }
+
         product.setProductName(parameter.getProductName());
-        product.setPrice(parameter.getPrice());
+        product.setPrice(finalPrice);
+        product.setOriginalPrice(parameter.getOriginalPrice() > 0 ? parameter.getOriginalPrice() : parameter.getPrice());
+        product.setDiscountRate(parameter.getDiscountRate());
         product.setCategory(parameter.getCategory());
         product.setStock(parameter.getStock());
         product.setStatus(parameter.getStatus());
         product.setDescription(parameter.getDescription());
+        product.setImageUrl(parameter.getImageUrl());
+        product.setMainImageUrl(parameter.getMainImageUrl() != null ? parameter.getMainImageUrl() : parameter.getImageUrl());
+        product.setShippingFee(parameter.getShippingFee());
+        product.setShippingDays(parameter.getShippingDays());
+        product.setNew(parameter.isNew());
+        product.setBest(parameter.isBest());
+        product.setFeatured(parameter.isFeatured());
+        product.setProductOptions(parameter.getProductOptions());
         product.setUpdateDt(LocalDateTime.now());
 
         sellerRepository.save(product);

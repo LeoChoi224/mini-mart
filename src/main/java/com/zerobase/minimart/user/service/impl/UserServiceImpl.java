@@ -23,15 +23,20 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-@RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final MailService mailService;
+    
+    @Autowired(required = false)
+    private MailService mailService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public boolean signUp(UserInput parameter) {
@@ -68,7 +73,12 @@ public class UserServiceImpl implements UserService {
             String subject = "[mini-mart] 사이트 가입을 축하드립니다. ";
             String text = "<p>[mini-mart] 사이트 가입을 축하드립니다.</p><p>아래 링크를 클릭하셔서 가입을 완료 하세요. </p>"
                     + "<div><a target='_blank' href='http://localhost:8080/user/email_auth?uuid=" + uuid + "'> 가입 완료 </a></div>";
-            mailService.sendHtmlMail(email, subject, text);
+            
+            if (mailService != null) {
+                mailService.sendHtmlMail(email, subject, text);
+            } else {
+                System.out.println("메일 서비스가 비활성화되어 있습니다. 이메일 인증 링크: " + uuid);
+            }
 
             return true;
         } catch (Exception e) {
@@ -220,7 +230,12 @@ public class UserServiceImpl implements UserService {
         String subject = "[mini-mart] 비밀번호 초기화 메일입니다. ";
         String text = "<p>[mini-mart] 비밀번호 초기화 메일입니다. </p><p>아래 링크를 클릭하셔서 비밀번호를 초기화 하세요. </p>"
                 + "<div><a target='_blank' href='http://localhost:8080/user/reset_password?id=" + uuid + "'> 비밀번호 초기화 링크 </a></div>";
-        mailService.sendHtmlMail(email, subject, text);
+        
+        if (mailService != null) {
+            mailService.sendHtmlMail(email, subject, text);
+        } else {
+            System.out.println("메일 서비스가 비활성화되어 있습니다. 비밀번호 재설정 링크: " + uuid);
+        }
 
         return true;
     }

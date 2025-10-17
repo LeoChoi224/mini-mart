@@ -1,73 +1,116 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>상품 등록</title>
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
-</head>
+<head th:replace="fragments/layout.html :: common-head('상품 등록')"></head>
 <body>
+    <div th:replace="~{fragments/layout.html :: fragment-seller-body-menu}"></div>
 
-<h6 style="margin-top: 0px; margin-bottom: 0px; text-align:center;">
-    <a th:href="@{/order/seller/home}">
-        <img src="/images/minimart-title.png" alt="Mini Mart" style="width: 600px; height: 300px;">
-    </a>
-</h6>
+    <div class="form-container">
+        <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary-color);">🛍️ 새 상품 등록</h2>
+        
+        <form method="post" th:action="@{/order/seller/product/add}">
+            <div class="form-row">
+                <div class="form-col">
+                    <label class="form-label">상품명 *</label>
+                    <input type="text" name="productName" class="form-input" placeholder="상품명을 입력하세요" required>
+                </div>
+                <div class="form-col">
+                    <label class="form-label">카테고리 *</label>
+                    <select name="category" class="form-input" required>
+                        <option value="">카테고리를 선택하세요</option>
+                        <option value="전자제품">📱 전자제품</option>
+                        <option value="가전디지털스포츠/레저">🏠 가전/디지털/스포츠</option>
+                        <option value="생활용품">🧽 생활용품</option>
+                        <option value="뷰티">💄 뷰티</option>
+                        <option value="패션의류/잡화">👕 패션/의류/잡화</option>
+                        <option value="식품">🍎 식품</option>
+                        <option value="기타">📦 기타</option>
+                    </select>
+                </div>
+            </div>
 
-<div th:replace="~{fragments/layout.html :: fragment-seller-body-menu}"></div>
+            <div class="form-row">
+                <div class="form-col">
+                    <label class="form-label">원가 (할인 전 가격) *</label>
+                    <input type="number" name="originalPrice" class="form-input" placeholder="원가를 입력하세요" required>
+                </div>
+                <div class="form-col">
+                    <label class="form-label">할인율 (%)</label>
+                    <input type="number" name="discountRate" class="form-input" placeholder="0" min="0" max="100" value="0">
+                </div>
+            </div>
 
-<form method="post" th:action="@{/order/seller/product/add}">
-    <table align="center" border="1" cellpadding="10">
-        <h3 style="text-align:center;">상품 추가</h3>
-        <tr>
-            <th>상품명</th>
-            <td><input type="text" name="productName" placeholder="상품명을 입력하세요" required></td>
-        </tr>
-        <tr>
-            <th>가격</th>
-            <td><input type="number" name="price" placeholder="가격을 입력하세요" required></td>
-        </tr>
-        <tr>
-            <th>상세 설명</th>
-            <td><textarea name="description" rows="6" placeholder="상세 정보를 입력하세요" required></textarea></td>
-        </tr>
-        <tr>
-            <th>이미지 URL</th>
-            <td><input type="text" name="imageUrl" placeholder="이미지 주소를 입력하세요" /></td>
-        </tr>
-        <tr>
-            <th>카테고리</th>
-            <td>
-                <select name="category">
-                    <option value="전자제품">전자제품</option>
-                    <option value="가전디지털스포츠/레저">가전디지털스포츠/레저</option>
-                    <option value="생활용품">생활용품</option>
-                    <option value="뷰티">뷰티</option>
-                    <option value="패션">패션의류/잡화</option>
-                    <option value="식품">식품</option>
-                    <option value="기타">기타</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <th>재고 수량</th>
-            <td><input type="number" name="stock" required /></td>
-        </tr>
-        <tr>
-            <th>판매 상태</th>
-            <td>
-                <select name="status">
-                    <option value="판매중">판매중</option>
-                    <option value="품절">품절</option>
-                </select>
-            </td>
-        </tr>
-    </table>
+            <div class="form-row">
+                <div class="form-col">
+                    <label class="form-label">재고 수량 *</label>
+                    <input type="number" name="stock" class="form-input" placeholder="재고 수량을 입력하세요" required>
+                </div>
+                <div class="form-col">
+                    <label class="form-label">판매 상태 *</label>
+                    <select name="status" class="form-input" required>
+                        <option value="판매중">✅ 판매중</option>
+                        <option value="품절">❌ 품절</option>
+                        <option value="준비중">⏳ 준비중</option>
+                    </select>
+                </div>
+            </div>
 
-    <div style="text-align: center; margin-top: 16px;">
-        <button type="submit">등록하기</button>
+            <div class="form-row">
+                <div class="form-col">
+                    <label class="form-label">배송비</label>
+                    <input type="number" name="shippingFee" class="form-input" placeholder="배송비 (원)" value="0">
+                </div>
+                <div class="form-col">
+                    <label class="form-label">배송 소요일</label>
+                    <input type="number" name="shippingDays" class="form-input" placeholder="배송 소요일 (일)" value="1">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-col">
+                    <label class="form-label">이미지 URL</label>
+                    <input type="url" name="imageUrl" class="form-input" placeholder="상품 이미지 URL을 입력하세요">
+                </div>
+                <div class="form-col">
+                    <label class="form-label">대표 이미지 URL</label>
+                    <input type="url" name="mainImageUrl" class="form-input" placeholder="대표 이미지 URL (선택사항)">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">상세 설명 *</label>
+                <textarea name="description" class="form-textarea" placeholder="상품에 대한 상세한 설명을 입력하세요" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">상품 옵션 (JSON 형태)</label>
+                <textarea name="productOptions" class="form-textarea" placeholder='예: {"색상": ["빨강", "파랑", "초록"], "사이즈": ["S", "M", "L"]}'></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-col">
+                    <label class="form-label">
+                        <input type="checkbox" name="isNew" value="true"> 신상품
+                    </label>
+                </div>
+                <div class="form-col">
+                    <label class="form-label">
+                        <input type="checkbox" name="isBest" value="true"> 베스트 상품
+                    </label>
+                </div>
+                <div class="form-col">
+                    <label class="form-label">
+                        <input type="checkbox" name="isFeatured" value="true"> 추천 상품
+                    </label>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary">상품 등록하기</button>
+                <a th:href="@{/order/seller/home}" class="btn btn-outline" style="margin-left: 1rem;">취소</a>
+            </div>
+        </form>
     </div>
-</form>
 
-<div th:replace="fragments/layout.html :: common-footer"></div>
+    <div th:replace="fragments/layout.html :: common-footer"></div>
 </body>
 </html>

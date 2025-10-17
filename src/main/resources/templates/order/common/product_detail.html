@@ -1,103 +1,747 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>상품 상세 정보</title>
+<head th:replace="fragments/layout.html :: common-head('상품 상세 정보')"></head>
+<body>
+    <div th:replace="~{fragments/layout.html :: fragment-body-menu}"></div>
+
+    <div class="main-container">
+        <div class="product-detail-container">
+            <!-- 상품 이미지 영역 -->
+            <div class="product-image-section">
+                <div class="main-image">
+                    <img th:src="@{'/images/' + (${product.mainImageUrl} ?: ${product.imageUrl})}" 
+                         alt="상품 이미지" class="product-detail-image">
+                </div>
+                <div class="product-badges" style="margin-top: 1rem;">
+                    <span class="badge badge-new" th:if="${product.isNew}">🆕 신상품</span>
+                    <span class="badge badge-sale" th:if="${product.discountRate > 0}">💰 할인</span>
+                    <span class="badge badge-best" th:if="${product.isBest}">⭐ 베스트</span>
+                    <span class="badge" th:if="${product.isFeatured}">❤️ 추천</span>
+                </div>
+            </div>
+
+            <!-- 상품 정보 영역 -->
+            <div class="product-info-section">
+                <h1 class="product-title" th:text="${product.productName}">상품명</h1>
+                
+                <!-- 가격 정보 -->
+                <div class="price-section">
+                    <div th:if="${product.discountRate > 0}" class="price-with-discount">
+                        <span class="original-price" th:text="'₩' + ${#numbers.formatInteger(product.originalPrice, 3, 'COMMA')}">원가</span>
+                        <span class="discount-rate" th:text="'-' + ${product.discountRate} + '%'">할인율</span>
+                        <div class="final-price" th:text="'₩' + ${#numbers.formatInteger(product.price, 3, 'COMMA')}">할인가</div>
+                    </div>
+                    <div th:unless="${product.discountRate > 0}" class="price-normal">
+                        <div class="final-price" th:text="'₩' + ${#numbers.formatInteger(product.price, 3, 'COMMA')}">가격</div>
+                    </div>
+                </div>
+
+                <!-- 상품 기본 정보 -->
+                <div class="product-meta-info">
+                    <div class="meta-item">
+                        <span class="meta-label">📦 카테고리</span>
+                        <span class="meta-value" th:text="${product.category}">카테고리</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">📊 재고</span>
+                        <span class="meta-value" th:text="${product.stock} + '개'">재고</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">🚚 배송비</span>
+                        <span class="meta-value" th:text="${product.shippingFee == 0 ? '무료배송' : '₩' + #numbers.formatInteger(product.shippingFee, 3, 'COMMA')}">배송비</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">⏰ 배송소요</span>
+                        <span class="meta-value" th:text="${product.shippingDays} + '일'">배송소요</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">👀 조회수</span>
+                        <span class="meta-value" th:text="${product.viewCount}">조회수</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">🛒 구매수</span>
+                        <span class="meta-value" th:text="${product.purchaseCount}">구매수</span>
+                    </div>
+                </div>
+
+                <!-- 상품 상태 -->
+                <div class="product-status">
+                    <span th:if="${product.status == '판매중'}" class="status-badge status-available">✅ 판매중</span>
+                    <span th:if="${product.status == '품절'}" class="status-badge status-soldout">❌ 품절</span>
+                    <span th:if="${product.status == '준비중'}" class="status-badge status-preparing">⏳ 준비중</span>
+                </div>
+
+                <!-- 상품 옵션 (있는 경우) -->
+                <div th:if="${product.productOptions != null and !product.productOptions.isEmpty()}" class="product-options">
+                    <h3>상품 옵션</h3>
+                    <div class="options-content">
+                        <div class="option-group" th:each="option : ${productOptions}">
+                            <label class="option-label" th:text="${option.key}">옵션명</label>
+                            <select class="option-select" th:name="'option_' + ${option.key}">
+                                <option value="">선택하세요</option>
+                                <option th:each="value : ${option.value}" 
+                                        th:value="${value}" 
+                                        th:text="${value}">옵션값</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 수량 선택 및 장바구니 담기 -->
+                <div class="purchase-section">
+                    <div class="quantity-section">
+                        <label class="quantity-label">수량</label>
+                        <div class="quantity-controls">
+                            <button type="button" class="quantity-btn" onclick="decreaseQuantity()">-</button>
+                            <input type="number" id="quantity" name="quantity" value="1" min="1" max="99" class="quantity-input">
+                            <button type="button" class="quantity-btn" onclick="increaseQuantity()">+</button>
+                        </div>
+                    </div>
+                    
+                    <div class="purchase-actions">
+                        <button type="button" class="btn btn-primary btn-lg" onclick="addToCart()">
+                            🛒 장바구니 담기
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-lg" onclick="buyNow()">
+                            💳 바로 구매
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 상세 설명 -->
+                <div class="product-description-section">
+                    <h3>상품 설명</h3>
+                    <div class="description-content" th:text="${product.description}">상품 설명</div>
+                </div>
+
+                <!-- 등록/수정 정보 -->
+                <div class="product-dates">
+                    <div class="date-item">
+                        <span class="date-label">등록일</span>
+                        <span class="date-value" th:text="${#temporals.format(product.regDt, 'yyyy-MM-dd HH:mm')}">등록일</span>
+                    </div>
+                    <div class="date-item" th:if="${product.updateDt != product.regDt}">
+                        <span class="date-label">수정일</span>
+                        <span class="date-value" th:text="${#temporals.format(product.updateDt, 'yyyy-MM-dd HH:mm')}">수정일</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 리뷰 섹션 -->
+        <div class="reviews-section">
+            <h2>📝 상품 리뷰</h2>
+            
+            <!-- 리뷰 통계 -->
+            <div class="review-stats">
+                <div class="rating-summary">
+                    <div class="average-rating">
+                        <span class="rating-number" th:text="${averageRating}">4.5</span>
+                        <div class="stars">
+                            <span th:each="i : ${#numbers.sequence(1, 5)}" 
+                                  th:class="${i <= averageRating ? 'star filled' : 'star'}">⭐</span>
+                        </div>
+                    </div>
+                    <div class="rating-count" th:text="'총 ' + ${reviewCount} + '개 리뷰'">총 123개 리뷰</div>
+                </div>
+                
+                <div class="rating-breakdown">
+                    <div class="rating-bar" th:each="i : ${#numbers.sequence(5, 1)}">
+                        <span class="rating-label" th:text="${i} + '점'">5점</span>
+                        <div class="bar-container">
+                            <div class="bar-fill" th:style="'width: ' + ${ratingPercentages[i-1]} + '%'"></div>
+                        </div>
+                        <span class="rating-count" th:text="${ratingCounts[i-1]}">45</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 리뷰 목록 -->
+            <div class="reviews-list">
+                <div class="review-item" th:each="review : ${reviews}">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <span class="reviewer-name" th:text="${review.user.userName}">구매자</span>
+                            <div class="review-rating">
+                                <span th:each="i : ${#numbers.sequence(1, 5)}" 
+                                      th:class="${i <= review.rating ? 'star filled' : 'star'}">⭐</span>
+                            </div>
+                        </div>
+                        <div class="review-date" th:text="${#temporals.format(review.regDt, 'yyyy-MM-dd')}">2025-01-01</div>
+                    </div>
+                    
+                    <div class="review-content">
+                        <h4 class="review-title" th:text="${review.title}">리뷰 제목</h4>
+                        <p class="review-text" th:text="${review.content}">리뷰 내용</p>
+                        <div th:if="${review.imageUrl != null}" class="review-image">
+                            <img th:src="@{'/images/' + ${review.imageUrl}}" alt="리뷰 이미지">
+                        </div>
+                    </div>
+                    
+                    <div class="review-footer">
+                        <button class="helpful-btn" onclick="toggleHelpful(${review.id})">
+                            👍 도움됨 <span th:text="${review.helpfulCount}">0</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 리뷰 작성 버튼 (구매자만) -->
+            <div class="review-actions" th:if="${canWriteReview}">
+                <button class="btn btn-primary" onclick="openReviewModal()">
+                    ✍️ 리뷰 작성하기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments/layout.html :: common-footer"></div>
+    <script src="/js/comma-util.js"></script>
+
     <style>
-        body {
+        .product-detail-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin: 2rem 0;
+        }
+
+        .product-image-section {
             text-align: center;
         }
-        .container {
+
+        .product-detail-image {
+            width: 100%;
+            max-width: 500px;
+            height: 400px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .product-info-section {
+            padding: 1rem;
+        }
+
+        .product-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+        }
+
+        .price-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--light-gray);
+            border-radius: var(--border-radius);
+        }
+
+        .price-with-discount {
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            margin-top: 30px;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
-        .image-box {
-            width: 400px;
-            margin-right: 40px;
+
+        .original-price {
+            text-decoration: line-through;
+            color: var(--medium-gray);
+            font-size: 1.2rem;
         }
-        .image-box img {
+
+        .discount-rate {
+            background: var(--danger-color);
+            color: var(--white);
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .final-price {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+
+        .price-normal .final-price {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+
+        .product-meta-info {
+            margin-bottom: 2rem;
+        }
+
+        .meta-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #E9ECEF;
+        }
+
+        .meta-label {
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .meta-value {
+            color: var(--medium-gray);
+        }
+
+        .product-status {
+            margin-bottom: 2rem;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .status-available {
+            background: var(--success-color);
+            color: var(--white);
+        }
+
+        .status-soldout {
+            background: var(--danger-color);
+            color: var(--white);
+        }
+
+        .status-preparing {
+            background: var(--warning-color);
+            color: var(--dark-gray);
+        }
+
+        .product-options,
+        .product-description-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .product-options h3,
+        .product-description-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .description-content {
+            line-height: 1.6;
+            color: var(--dark-gray);
+        }
+
+        .product-dates {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.9rem;
+            color: var(--medium-gray);
+        }
+
+        .date-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .date-label {
+            font-weight: 600;
+        }
+
+        .purchase-section {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: var(--light-gray);
+            border-radius: var(--border-radius);
+        }
+
+        .quantity-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .quantity-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-gray);
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--primary-color);
+            background: var(--white);
+            color: var(--primary-color);
+            border-radius: var(--border-radius-sm);
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .quantity-btn:hover {
+            background: var(--primary-color);
+            color: var(--white);
+        }
+
+        .quantity-input {
+            width: 80px;
+            height: 40px;
+            text-align: center;
+            border: 2px solid #E9ECEF;
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .purchase-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-lg {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            flex: 1;
+        }
+
+        .option-group {
+            margin-bottom: 1rem;
+        }
+
+        .option-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-gray);
+        }
+
+        .option-select {
             width: 100%;
-            border: 1px solid #ccc;
+            padding: 0.75rem;
+            border: 2px solid #E9ECEF;
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            transition: var(--transition);
         }
-        .info-box {
-            width: 500px;
-            text-align: left;
+
+        .option-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
+
+        .reviews-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
         }
-        th, td {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
+
+        .reviews-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
         }
-        h1 {
-            margin-bottom: 20px;
+
+        .review-stats {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--light-gray);
+            border-radius: var(--border-radius);
+        }
+
+        .rating-summary {
+            text-align: center;
+        }
+
+        .average-rating {
+            margin-bottom: 1rem;
+        }
+
+        .rating-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+
+        .stars {
+            margin: 0.5rem 0;
+        }
+
+        .star {
+            font-size: 1.2rem;
+            margin: 0 0.1rem;
+            opacity: 0.3;
+        }
+
+        .star.filled {
+            opacity: 1;
+        }
+
+        .rating-count {
+            color: var(--medium-gray);
+            font-size: 0.9rem;
+        }
+
+        .rating-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .rating-bar {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .rating-label {
+            width: 30px;
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+
+        .bar-container {
+            flex: 1;
+            height: 8px;
+            background: #E9ECEF;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .reviews-list {
+            margin-bottom: 2rem;
+        }
+
+        .review-item {
+            padding: 1.5rem;
+            border: 1px solid #E9ECEF;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            background: var(--white);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .reviewer-name {
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .review-rating .star {
+            font-size: 1rem;
+        }
+
+        .review-date {
+            color: var(--medium-gray);
+            font-size: 0.9rem;
+        }
+
+        .review-content {
+            margin-bottom: 1rem;
+        }
+
+        .review-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .review-text {
+            color: var(--dark-gray);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .review-image img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: var(--border-radius-sm);
+        }
+
+        .review-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .helpful-btn {
+            background: none;
+            border: 1px solid #E9ECEF;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            color: var(--medium-gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .helpful-btn:hover {
+            background: var(--light-gray);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .review-actions {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #E9ECEF;
+        }
+
+        @media (max-width: 768px) {
+            .product-detail-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .product-detail-image {
+                height: 300px;
+            }
+            
+            .product-title {
+                font-size: 1.5rem;
+            }
+            
+            .final-price {
+                font-size: 1.5rem;
+            }
+
+            .purchase-actions {
+                flex-direction: column;
+            }
         }
     </style>
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
-</head>
-<body>
 
-<h6 style="margin-top: 0px; margin-bottom: 0px;">
-    <a th:href="@{/order/common/home}">
-        <img src="/images/minimart-title.png" alt="Mini Mart" style="width: 600px; height: 300px;">
-    </a>
-</h6>
+    <script>
+        function decreaseQuantity() {
+            const quantityInput = document.getElementById('quantity');
+            const currentValue = parseInt(quantityInput.value);
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+            }
+        }
 
-<div th:replace="~{fragments/layout.html :: fragment-body-menu}"></div>
+        function increaseQuantity() {
+            const quantityInput = document.getElementById('quantity');
+            const currentValue = parseInt(quantityInput.value);
+            const maxValue = parseInt(quantityInput.getAttribute('max'));
+            if (currentValue < maxValue) {
+                quantityInput.value = currentValue + 1;
+            }
+        }
 
-<div class="container">
-    <!-- 이미지 영역 -->
-    <div class="image-box">
-        <img th:src="@{'/images/' + ${product.imageUrl}}" alt="상품 이미지">
-    </div>
+        function addToCart() {
+            const productId = /*[[${product.id}]]*/ null;
+            const quantity = document.getElementById('quantity').value;
+            const selectedOptions = getSelectedOptions();
+            
+            // 장바구니 담기 로직
+            fetch('/order/customer/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    productId: productId,
+                    quantity: quantity,
+                    options: selectedOptions
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('장바구니에 상품이 추가되었습니다!');
+                } else {
+                    alert('장바구니 담기에 실패했습니다: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('오류가 발생했습니다.');
+            });
+        }
 
-    <!-- 정보 영역 -->
-    <div class="info-box">
-        <table>
-            <tr>
-                <th>상품명</th>
-                <td th:text="${product.productName}">상품명</td>
-            </tr>
-            <tr>
-                <th>가격</th>
-                <td class="product-price" th:attr="data-price=${product.price}"></td>
+        function buyNow() {
+            const productId = /*[[${product.id}]]*/ null;
+            const quantity = document.getElementById('quantity').value;
+            const selectedOptions = getSelectedOptions();
+            
+            // 바로 구매 로직
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/order/customer/purchase/direct';
+            
+            const productIdInput = document.createElement('input');
+            productIdInput.type = 'hidden';
+            productIdInput.name = 'productId';
+            productIdInput.value = productId;
+            
+            const quantityInput = document.createElement('input');
+            quantityInput.type = 'hidden';
+            quantityInput.name = 'quantity';
+            quantityInput.value = quantity;
+            
+            const optionsInput = document.createElement('input');
+            optionsInput.type = 'hidden';
+            optionsInput.name = 'options';
+            optionsInput.value = JSON.stringify(selectedOptions);
+            
+            form.appendChild(productIdInput);
+            form.appendChild(quantityInput);
+            form.appendChild(optionsInput);
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
 
-            </tr>
-            <tr>
-                <th>카테고리</th>
-                <td th:text="${product.category}">카테고리</td>
-            </tr>
-            <tr>
-                <th>재고 수량</th>
-                <td th:text="${product.stock}">재고 수량</td>
-            </tr>
-            <tr>
-                <th>판매 상태</th>
-                <td th:text="${product.status}">판매 상태</td>
-            </tr>
-            <tr>
-                <th>상세 설명</th>
-                <td th:text="${product.description}">상세 설명</td>
-            </tr>
-            <tr>
-                <th>등록일</th>
-                <td th:text="${#temporals.format(product.regDt, 'yyyy-MM-dd HH:mm')}">등록일</td>
-            </tr>
-            <tr>
-                <th>수정일</th>
-                <td th:text="${#temporals.format(product.updateDt, 'yyyy-MM-dd HH:mm')}">수정일</td>
-            </tr>
-        </table>
-    </div>
-</div>
-
-<div th:replace="fragments/layout.html :: common-footer"></div>
-
-<script src="/js/comma-util.js"></script>
-
+        function getSelectedOptions() {
+            const options = {};
+            const optionSelects = document.querySelectorAll('.option-select');
+            
+            optionSelects.forEach(select => {
+                const optionName = select.name.replace('option_', '');
+                if (select.value) {
+                    options[optionName] = select.value;
+                }
+            });
+            
+            return options;
+        }
+    </script>
 </body>
 </html>
