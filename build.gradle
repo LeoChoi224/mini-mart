@@ -39,6 +39,9 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
 //    runtimeOnly 'mysql:mysql-connector-java:8.0.33'
 
+    // Git Actions 관련
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
     // 웹 MVC 기본 구조
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
